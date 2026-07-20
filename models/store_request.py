@@ -81,6 +81,32 @@ class InventoryStoreRequest(models.Model):
         string="Lines",
     )
 
+    line_count = fields.Integer(string="Items", compute="_compute_line_count")
+
+    has_short_lines = fields.Boolean(
+        string="Has Short Lines",
+        compute="_compute_has_short_lines",
+        help="True when at least one line requests more than is currently "
+        "available at the warehouse — this request cannot be fulfilled and "
+        "must be rejected instead (Decision 5, no partial fulfillment).",
+    )
+
+    # ==========================================================
+    # Compute
+    # ==========================================================
+
+    @api.depends("line_ids")
+    def _compute_line_count(self):
+        for request in self:
+            request.line_count = len(request.line_ids)
+
+    @api.depends("line_ids.qty_requested", "line_ids.qty_available")
+    def _compute_has_short_lines(self):
+        for request in self:
+            request.has_short_lines = any(
+                line.qty_requested > line.qty_available for line in request.line_ids
+            )
+
     # ==========================================================
     # Create
     # ==========================================================

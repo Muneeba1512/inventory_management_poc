@@ -18,7 +18,16 @@
 
                 <field name="requested_by"/>
 
-                <field name="state"/>
+                <field name="line_count" string="Items"/>
+
+                <field
+                    name="state"
+                    widget="badge"
+                    decoration-muted="state == 'draft'"
+                    decoration-info="state == 'submitted'"
+                    decoration-primary="state == 'approved'"
+                    decoration-danger="state == 'rejected'"
+                    decoration-success="state == 'fulfilled'"/>
 
             </list>
 
@@ -75,6 +84,11 @@
 
                 <sheet>
 
+                    <div class="alert alert-warning" role="alert" invisible="not has_short_lines or state not in ('draft', 'submitted', 'approved')">
+                        Warehouse stock cannot fully cover this request. It must be
+                        <strong>rejected</strong> — partial fulfillment is not supported.
+                    </div>
+
                     <group>
 
                         <group>
@@ -105,7 +119,7 @@
 
                             <field name="line_ids" readonly="state != 'draft'">
 
-                                <list editable="bottom">
+                                <list editable="bottom" decoration-danger="qty_requested &gt; qty_available" decoration-success="qty_requested &lt;= qty_available">
 
                                     <field name="product_id"/>
 
@@ -148,11 +162,15 @@
 
                 <field name="requested_by"/>
 
+                <filter name="to_approve" string="To Approve" domain="[('state','=','submitted')]"/>
+
+                <filter name="to_fulfill" string="To Fulfill" domain="[('state','=','approved')]"/>
+
+                <filter name="my_requests" string="My Requests" domain="[('requested_by','=', uid)]"/>
+
+                <separator/>
+
                 <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
-
-                <filter name="submitted" string="Submitted" domain="[('state','=','submitted')]"/>
-
-                <filter name="approved" string="Approved" domain="[('state','=','approved')]"/>
 
                 <filter name="fulfilled" string="Fulfilled" domain="[('state','=','fulfilled')]"/>
 
@@ -184,7 +202,7 @@
 
     <record id="action_inventory_store_request" model="ir.actions.act_window">
 
-        <field name="name">Store Requests</field>
+        <field name="name">Requests</field>
 
         <field name="res_model">inventory.store.request</field>
 

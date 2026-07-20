@@ -1,5 +1,5 @@
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class InventoryStoreConsumption(models.Model):
@@ -80,8 +80,36 @@ class InventoryStoreConsumption(models.Model):
                 raise UserError("Only draft consumption records can be confirmed.")
             if not consumption.line_ids:
                 raise UserError("Add at least one line before confirming.")
+            consumption._check_stock_availability()
             consumption._create_stock_moves()
             consumption.state = "done"
+
+    def _check_stock_availability(self):
+        """Block confirmation if any product's total quantity on this
+        consumption exceeds what is currently available at the store
+        location — prevents negative inventory through this workflow."""
+        self.ensure_one()
+        requested_by_product = {}
+        for line in self.line_ids:
+            requested_by_product[line.product_id] = (
+                requested_by_product.get(line.product_id, 0.0) + line.quantity
+            )
+
+        for product, requested_qty in requested_by_product.items():
+            available_qty = self.env["stock.quant"]._get_available_quantity(
+                product, self.store_id.stock_location_id
+            )
+            if requested_qty > available_qty:
+                raise ValidationError(
+                    "Cannot confirm: requested quantity for '%s' (%s) exceeds "
+                    "the available stock at %s (%s available)."
+                    % (
+                        product.display_name,
+                        requested_qty,
+                        self.store_id.name,
+                        available_qty,
+                    )
+                )
 
     def _create_stock_moves(self):
         """Move stock from the store location to the generic Customers location,

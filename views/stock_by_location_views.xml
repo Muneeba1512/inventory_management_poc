@@ -18,7 +18,11 @@
 
                 <field name="warehouse_id"/>
 
+                <field name="store_id"/>
+
                 <field name="quantity"/>
+
+                <field name="uom_id"/>
 
                 <field name="reserved_quantity"/>
 
@@ -68,12 +72,19 @@
 
                 <field name="warehouse_id"/>
 
+                <field name="store_id"/>
+
                 <group>
 
                     <filter
                         name="group_by_location"
                         string="Location"
                         context="{'group_by':'location_id'}"/>
+
+                    <filter
+                        name="group_by_store"
+                        string="Store"
+                        context="{'group_by':'store_id'}"/>
 
                     <filter
                         name="group_by_product"

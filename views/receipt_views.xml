@@ -14,11 +14,19 @@
 
                 <field name="name"/>
 
-                <field name="receipt_type"/>
+                <field
+                    name="receipt_type"
+                    widget="badge"
+                    decoration-muted="receipt_type in ('manual', 'barcode')"
+                    decoration-warning="receipt_type == 'ai'"/>
 
                 <field name="warehouse_id"/>
 
-                <field name="state"/>
+                <field
+                    name="state"
+                    widget="badge"
+                    decoration-muted="state == 'draft'"
+                    decoration-success="state == 'done'"/>
 
             </list>
 

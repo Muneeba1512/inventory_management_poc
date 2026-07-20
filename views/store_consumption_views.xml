@@ -18,7 +18,11 @@
 
                 <field name="date"/>
 
-                <field name="state"/>
+                <field
+                    name="state"
+                    widget="badge"
+                    decoration-muted="state == 'draft'"
+                    decoration-success="state == 'done'"/>
 
             </list>
 
@@ -51,6 +55,11 @@
                 </header>
 
                 <sheet>
+
+                    <div class="alert alert-info" role="alert">
+                        Recording consumption lowers store stock and builds the
+                        7-day average used for store-level low-stock alerts.
+                    </div>
 
                     <group>
 

@@ -34,4 +34,11 @@
         <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
     </record>
 
+    <record id="rule_stock_by_location_own_store" model="ir.rule">
+        <field name="name">Store Manager: own store stock only (My Store Stock)</field>
+        <field name="model_id" ref="model_inventory_stock_by_location"/>
+        <field name="domain_force">[('store_id.store_manager_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
+    </record>
+
 </odoo>

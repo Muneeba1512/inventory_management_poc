@@ -12,7 +12,7 @@
         sequence="10"/>
 
     <!-- ========================================================= -->
-    <!-- Dashboard -->
+    <!-- 1. Dashboard -->
     <!-- ========================================================= -->
 
     <menuitem
@@ -22,13 +22,14 @@
         sequence="1"/>
 
     <!-- ========================================================= -->
-    <!-- Warehouse -->
+    <!-- 2. Warehouse (Warehouse Staff, Admin) -->
     <!-- ========================================================= -->
 
     <menuitem
         id="menu_inventory_warehouse"
         name="Warehouse"
         parent="menu_inventory_management_root"
+        groups="inventory_management_poc.group_inventory_warehouse,inventory_management_poc.group_inventory_admin"
         sequence="2"/>
 
     <menuitem
@@ -36,6 +37,7 @@
         name="Receipts"
         parent="menu_inventory_warehouse"
         action="action_inventory_receipt"
+        groups="inventory_management_poc.group_inventory_warehouse,inventory_management_poc.group_inventory_admin"
         sequence="1"/>
 
     <menuitem
@@ -43,23 +45,38 @@
         name="Stock by Location"
         parent="menu_inventory_warehouse"
         action="action_inventory_stock_by_location"
+        groups="inventory_management_poc.group_inventory_warehouse,inventory_management_poc.group_inventory_admin"
         sequence="2"/>
 
     <!-- ========================================================= -->
-    <!-- Stores -->
+    <!-- 3. Requests (all roles — single list, tabs are saved       -->
+    <!-- filters: To Approve / To Fulfill / My Requests)            -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_requests"
+        name="Requests"
+        parent="menu_inventory_management_root"
+        action="action_inventory_store_request"
+        sequence="3"/>
+
+    <!-- ========================================================= -->
+    <!-- 4. Stores (Store Manager — own store, Admin) -->
     <!-- ========================================================= -->
 
     <menuitem
         id="menu_inventory_store"
         name="Stores"
         parent="menu_inventory_management_root"
-        sequence="3"/>
+        groups="inventory_management_poc.group_inventory_store,inventory_management_poc.group_inventory_admin"
+        sequence="4"/>
 
     <menuitem
         id="menu_inventory_store_manage"
         name="Manage Stores"
         parent="menu_inventory_store"
         action="action_inventory_store"
+        groups="inventory_management_poc.group_inventory_store,inventory_management_poc.group_inventory_admin"
         sequence="1"/>
 
     <menuitem
@@ -67,53 +84,45 @@
         name="Record Consumption"
         parent="menu_inventory_store"
         action="action_inventory_store_consumption"
+        groups="inventory_management_poc.group_inventory_store,inventory_management_poc.group_inventory_admin"
         sequence="2"/>
 
-    <!-- ========================================================= -->
-    <!-- Requests -->
-    <!-- ========================================================= -->
-
     <menuitem
-        id="menu_inventory_requests"
-        name="Requests"
-        parent="menu_inventory_management_root"
-        sequence="4"/>
-
-    <menuitem
-        id="menu_inventory_store_request"
-        name="Store Requests"
-        parent="menu_inventory_requests"
-        action="action_inventory_store_request"
-        sequence="1"/>
+        id="menu_inventory_store_my_stock"
+        name="My Store Stock"
+        parent="menu_inventory_store"
+        action="action_inventory_stock_by_location"
+        groups="inventory_management_poc.group_inventory_store,inventory_management_poc.group_inventory_admin"
+        sequence="3"/>
 
     <!-- ========================================================= -->
-    <!-- Alerts -->
+    <!-- 5. Low Stock Alerts (all roles — content ships in a later  -->
+    <!-- sprint; menu placeholder kept at the spec'd position)      -->
     <!-- ========================================================= -->
 
     <menuitem
         id="menu_inventory_alerts"
-        name="Alerts"
+        name="Low Stock Alerts"
         parent="menu_inventory_management_root"
         sequence="5"/>
 
     <!-- ========================================================= -->
-    <!-- Reports -->
-    <!-- ========================================================= -->
-
-    <menuitem
-        id="menu_inventory_reports"
-        name="Reports"
-        parent="menu_inventory_management_root"
-        sequence="6"/>
-
-    <!-- ========================================================= -->
-    <!-- Administration -->
+    <!-- 6. Configuration (Admin only) -->
     <!-- ========================================================= -->
 
     <menuitem
         id="menu_inventory_administration"
-        name="Administration"
+        name="Configuration"
         parent="menu_inventory_management_root"
-        sequence="7"/>
+        groups="inventory_management_poc.group_inventory_admin"
+        sequence="6"/>
+
+    <menuitem
+        id="menu_inventory_configuration_products"
+        name="Products"
+        parent="menu_inventory_administration"
+        action="stock.product_template_action_product"
+        groups="inventory_management_poc.group_inventory_admin"
+        sequence="1"/>
 
 </odoo>

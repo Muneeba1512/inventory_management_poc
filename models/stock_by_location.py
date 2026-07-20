@@ -17,8 +17,18 @@ class InventoryStockByLocation(models.Model):
     product_id = fields.Many2one("product.product", string="Product", readonly=True)
     location_id = fields.Many2one("stock.location", string="Location", readonly=True)
     warehouse_id = fields.Many2one("stock.warehouse", string="Warehouse", readonly=True)
+    store_id = fields.Many2one(
+        "inventory.store",
+        string="Store",
+        readonly=True,
+        help="Set when this location is a store's stock location; blank for "
+        "warehouse-only locations.",
+    )
     quantity = fields.Float(string="On Hand", readonly=True)
     reserved_quantity = fields.Float(string="Reserved", readonly=True)
+    uom_id = fields.Many2one(
+        related="product_id.uom_id", string="Unit", readonly=True
+    )
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
@@ -30,10 +40,12 @@ class InventoryStockByLocation(models.Model):
                     sq.product_id AS product_id,
                     sq.location_id AS location_id,
                     sl.warehouse_id AS warehouse_id,
+                    ist.id AS store_id,
                     sq.quantity AS quantity,
                     sq.reserved_quantity AS reserved_quantity
                 FROM stock_quant sq
                 JOIN stock_location sl ON sl.id = sq.location_id
+                LEFT JOIN inventory_store ist ON ist.stock_location_id = sq.location_id
                 WHERE sl.usage = 'internal'
                   AND sq.quantity != 0
             )
