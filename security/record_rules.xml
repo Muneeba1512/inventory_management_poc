@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- Store Manager: own store only (FDD security requirement — -->
+    <!-- "A Store Manager cannot see another store's data")        -->
+    <!-- ========================================================= -->
+
+    <record id="rule_store_request_own_store" model="ir.rule">
+        <field name="name">Store Manager: own store requests only</field>
+        <field name="model_id" ref="model_inventory_store_request"/>
+        <field name="domain_force">[('store_id.store_manager_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
+    </record>
+
+    <record id="rule_store_request_line_own_store" model="ir.rule">
+        <field name="name">Store Manager: own store request lines only</field>
+        <field name="model_id" ref="model_inventory_store_request_line"/>
+        <field name="domain_force">[('request_id.store_id.store_manager_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
+    </record>
+
+    <record id="rule_store_consumption_own_store" model="ir.rule">
+        <field name="name">Store Manager: own store consumption only</field>
+        <field name="model_id" ref="model_inventory_store_consumption"/>
+        <field name="domain_force">[('store_id.store_manager_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
+    </record>
+
+    <record id="rule_store_consumption_line_own_store" model="ir.rule">
+        <field name="name">Store Manager: own store consumption lines only</field>
+        <field name="model_id" ref="model_inventory_store_consumption_line"/>
+        <field name="domain_force">[('consumption_id.store_id.store_manager_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
+    </record>
+
+</odoo>

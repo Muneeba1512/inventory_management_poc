@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find / -iname \"stock_move.py\" 2>/dev/null | grep -v pycache)",
+      "Read(//c//**)"
+    ]
+  }
+}

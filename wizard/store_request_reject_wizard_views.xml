@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- Reject Store Request Wizard Form -->
+    <!-- ========================================================= -->
+
+    <record id="view_inventory_store_request_reject_wizard_form" model="ir.ui.view">
+        <field name="name">inventory.store.request.reject.wizard.form</field>
+        <field name="model">inventory.store.request.reject.wizard</field>
+        <field name="arch" type="xml">
+
+            <form string="Reject Request">
+
+                <group>
+
+                    <field name="request_id" invisible="1"/>
+
+                    <field name="reason" placeholder="Explain why this request is being rejected..."/>
+
+                </group>
+
+                <footer>
+
+                    <button
+                        name="action_confirm_reject"
+                        string="Reject Request"
+                        type="object"
+                        class="btn-danger"/>
+
+                    <button string="Cancel" special="cancel"/>
+
+                </footer>
+
+            </form>
+
+        </field>
+    </record>
+
+</odoo>

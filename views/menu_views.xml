@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- Root Application -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_management_root"
+        name="Inventory Management"
+        web_icon="inventory_management_poc,static/description/icon.png"
+        sequence="10"/>
+
+    <!-- ========================================================= -->
+    <!-- Dashboard -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_dashboard"
+        name="Dashboard"
+        parent="menu_inventory_management_root"
+        sequence="1"/>
+
+    <!-- ========================================================= -->
+    <!-- Warehouse -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_warehouse"
+        name="Warehouse"
+        parent="menu_inventory_management_root"
+        sequence="2"/>
+
+    <menuitem
+        id="menu_inventory_receipt"
+        name="Receipts"
+        parent="menu_inventory_warehouse"
+        action="action_inventory_receipt"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_inventory_stock_by_location"
+        name="Stock by Location"
+        parent="menu_inventory_warehouse"
+        action="action_inventory_stock_by_location"
+        sequence="2"/>
+
+    <!-- ========================================================= -->
+    <!-- Stores -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_store"
+        name="Stores"
+        parent="menu_inventory_management_root"
+        sequence="3"/>
+
+    <menuitem
+        id="menu_inventory_store_manage"
+        name="Manage Stores"
+        parent="menu_inventory_store"
+        action="action_inventory_store"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_inventory_store_consumption"
+        name="Record Consumption"
+        parent="menu_inventory_store"
+        action="action_inventory_store_consumption"
+        sequence="2"/>
+
+    <!-- ========================================================= -->
+    <!-- Requests -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_requests"
+        name="Requests"
+        parent="menu_inventory_management_root"
+        sequence="4"/>
+
+    <menuitem
+        id="menu_inventory_store_request"
+        name="Store Requests"
+        parent="menu_inventory_requests"
+        action="action_inventory_store_request"
+        sequence="1"/>
+
+    <!-- ========================================================= -->
+    <!-- Alerts -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_alerts"
+        name="Alerts"
+        parent="menu_inventory_management_root"
+        sequence="5"/>
+
+    <!-- ========================================================= -->
+    <!-- Reports -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_reports"
+        name="Reports"
+        parent="menu_inventory_management_root"
+        sequence="6"/>
+
+    <!-- ========================================================= -->
+    <!-- Administration -->
+    <!-- ========================================================= -->
+
+    <menuitem
+        id="menu_inventory_administration"
+        name="Administration"
+        parent="menu_inventory_management_root"
+        sequence="7"/>
+
+</odoo>

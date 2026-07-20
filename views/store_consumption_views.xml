@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- Store Consumption Tree View -->
+    <!-- ========================================================= -->
+
+    <record id="view_inventory_store_consumption_tree" model="ir.ui.view">
+        <field name="name">inventory.store.consumption.tree</field>
+        <field name="model">inventory.store.consumption</field>
+        <field name="arch" type="xml">
+
+            <list string="Store Consumption">
+
+                <field name="name"/>
+
+                <field name="store_id"/>
+
+                <field name="date"/>
+
+                <field name="state"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- Store Consumption Form View -->
+    <!-- ========================================================= -->
+
+    <record id="view_inventory_store_consumption_form" model="ir.ui.view">
+        <field name="name">inventory.store.consumption.form</field>
+        <field name="model">inventory.store.consumption</field>
+        <field name="arch" type="xml">
+
+            <form string="Store Consumption">
+
+                <header>
+
+                    <button
+                        name="action_confirm"
+                        string="Confirm"
+                        type="object"
+                        class="oe_highlight"
+                        invisible="state != 'draft'"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+
+                </header>
+
+                <sheet>
+
+                    <group>
+
+                        <group>
+
+                            <field name="name" readonly="1"/>
+
+                            <field name="store_id" readonly="state != 'draft'"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="date" readonly="state != 'draft'"/>
+
+                        </group>
+
+                    </group>
+
+                    <notebook>
+
+                        <page string="Lines">
+
+                            <field name="line_ids" readonly="state != 'draft'">
+
+                                <list editable="bottom">
+
+                                    <field name="product_id"/>
+
+                                    <field name="quantity"/>
+
+                                    <field name="uom_id"/>
+
+                                </list>
+
+                            </field>
+
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- Store Consumption Search View -->
+    <!-- ========================================================= -->
+
+    <record id="view_inventory_store_consumption_search" model="ir.ui.view">
+        <field name="name">inventory.store.consumption.search</field>
+        <field name="model">inventory.store.consumption</field>
+        <field name="arch" type="xml">
+
+            <search>
+
+                <field name="name"/>
+
+                <field name="store_id"/>
+
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+
+                <filter name="done" string="Done" domain="[('state','=','done')]"/>
+
+                <group>
+
+                    <filter
+                        name="group_by_store"
+                        string="Store"
+                        context="{'group_by':'store_id'}"/>
+
+                    <filter
+                        name="group_by_date"
+                        string="Date"
+                        context="{'group_by':'date'}"/>
+
+                </group>
+
+            </search>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- Store Consumption Action -->
+    <!-- ========================================================= -->
+
+    <record id="action_inventory_store_consumption" model="ir.actions.act_window">
+
+        <field name="name">Record Consumption</field>
+
+        <field name="res_model">inventory.store.consumption</field>
+
+        <field name="view_mode">list,form</field>
+
+        <field name="search_view_id" ref="view_inventory_store_consumption_search"/>
+
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                Record your first consumption entry.
+            </p>
+
+            <p>
+                Store Managers log products used or sold here. This lowers store
+                stock and feeds the 7-day low-stock average.
+            </p>
+
+        </field>
+
+    </record>
+
+</odoo>
