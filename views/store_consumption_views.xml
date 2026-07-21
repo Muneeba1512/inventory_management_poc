@@ -14,7 +14,11 @@
 
                 <field name="name"/>
 
+                <field name="product_summary" string="Product"/>
+
                 <field name="store_id"/>
+
+                <field name="total_quantity" string="Quantity"/>
 
                 <field name="date"/>
 
@@ -154,13 +158,15 @@
 
     <record id="action_inventory_store_consumption" model="ir.actions.act_window">
 
-        <field name="name">Record Consumption</field>
+        <field name="name">Stores / Record Consumption</field>
 
         <field name="res_model">inventory.store.consumption</field>
 
         <field name="view_mode">list,form</field>
 
         <field name="search_view_id" ref="view_inventory_store_consumption_search"/>
+
+        <field name="context">{'inventory_tab_group': 'stores', 'inventory_tab_key': 'record_consumption'}</field>
 
         <field name="help" type="html">
 

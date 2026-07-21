@@ -56,6 +56,43 @@ class InventoryStoreConsumption(models.Model):
         string="Lines",
     )
 
+    product_summary = fields.Char(
+        string="Product",
+        compute="_compute_product_summary",
+        help="Display-only summary of the products on this consumption "
+        "entry, for the list view. Not a real relation — a consumption "
+        "record can cover several products.",
+    )
+
+    total_quantity = fields.Float(
+        string="Quantity",
+        compute="_compute_total_quantity",
+        help="Display-only sum of all line quantities, for the list view.",
+    )
+
+    # ==========================================================
+    # Compute (display-only — no effect on the confirm workflow)
+    # ==========================================================
+
+    @api.depends("line_ids.product_id")
+    def _compute_product_summary(self):
+        for consumption in self:
+            names = consumption.line_ids.mapped("product_id.display_name")
+            if not names:
+                consumption.product_summary = ""
+            elif len(names) == 1:
+                consumption.product_summary = names[0]
+            else:
+                consumption.product_summary = "%s (+%d more)" % (
+                    names[0],
+                    len(names) - 1,
+                )
+
+    @api.depends("line_ids.quantity")
+    def _compute_total_quantity(self):
+        for consumption in self:
+            consumption.total_quantity = sum(consumption.line_ids.mapped("quantity"))
+
     # ==========================================================
     # Create
     # ==========================================================

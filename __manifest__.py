@@ -32,6 +32,18 @@ Inventory Management POC
         "views/menu_views.xml",
     ],
 
+    "assets": {
+        "web.assets_backend": [
+            "inventory_management_poc/static/src/scss/inventory_tab_strip.scss",
+            "inventory_management_poc/static/src/js/tab_strip/inventory_tabs_config.js",
+            "inventory_management_poc/static/src/js/tab_strip/inventory_tab_strip.js",
+            "inventory_management_poc/static/src/js/tab_strip/inventory_tab_strip.xml",
+            "inventory_management_poc/static/src/js/tab_strip/list_controller_patch.js",
+            "inventory_management_poc/static/src/js/tab_strip/list_view_patch.xml",
+            "inventory_management_poc/static/src/js/tab_strip/breadcrumb_name_patch.xml",
+        ],
+    },
+
     "application": True,
     "installable": True,
     "auto_install": False,

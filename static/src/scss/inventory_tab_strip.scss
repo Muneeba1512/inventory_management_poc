@@ -1,0 +1,16 @@
+// Wire Bootstrap's native nav-underline active color to Odoo's own
+// primary theme color (var(--bs-primary), already used by e.g. the
+// "New" button) instead of a hardcoded value — the underline uses
+// currentcolor internally, so this one variable drives both the
+// active tab's text and its underline. Inactive-tab grey comes from
+// Bootstrap's own text-muted utility, applied in the template.
+.o_inventory_tab_strip {
+    --bs-nav-underline-link-active-color: var(--bs-primary);
+    padding: 10px 24px 0 24px;
+    background-color: #f6f5f8;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    .nav-link {
+        cursor: pointer;
+    }
+}

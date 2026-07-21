@@ -20,8 +20,6 @@
 
                 <field name="stock_location_id"/>
 
-                <field name="active"/>
-
             </list>
 
         </field>
@@ -116,13 +114,15 @@
 
     <record id="action_inventory_store" model="ir.actions.act_window">
 
-        <field name="name">Stores</field>
+        <field name="name">Stores / Manage Stores</field>
 
         <field name="res_model">inventory.store</field>
 
         <field name="view_mode">list,form</field>
 
         <field name="search_view_id" ref="view_inventory_store_search"/>
+
+        <field name="context">{'inventory_tab_group': 'stores', 'inventory_tab_key': 'manage_stores'}</field>
 
         <field name="help" type="html">
 

@@ -22,6 +22,8 @@
 
                 <field name="warehouse_id"/>
 
+                <field name="create_date" string="Date"/>
+
                 <field
                     name="state"
                     widget="badge"
@@ -167,13 +169,15 @@
 
     <record id="action_inventory_receipt" model="ir.actions.act_window">
 
-        <field name="name">Receipts</field>
+        <field name="name">Warehouse / Receipts</field>
 
         <field name="res_model">inventory.receipt</field>
 
         <field name="view_mode">list,form</field>
 
         <field name="search_view_id" ref="view_inventory_receipt_search"/>
+
+        <field name="context">{'inventory_tab_group': 'warehouse', 'inventory_tab_key': 'receipts'}</field>
 
         <field name="help" type="html">
 

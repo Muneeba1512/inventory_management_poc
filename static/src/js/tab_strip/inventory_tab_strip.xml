@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Built on Bootstrap's own nav-underline component (bundled with
+         Odoo's web client) rather than custom-styled elements, so active/
+         inactive colors, spacing and hover behavior all come from Odoo's
+         own theme instead of hardcoded values. See inventory_tab_strip.scss
+         for the one-line wiring of the active color to Odoo's primary. -->
+    <t t-name="inventory_management_poc.InventoryTabStrip">
+        <div class="o_inventory_tab_strip nav nav-underline">
+            <t t-foreach="tabs" t-as="tab" t-key="tab.key">
+                <a
+                    href="#"
+                    class="nav-link"
+                    t-att-class="{ active: tab.key === props.activeKey, 'text-muted': tab.key !== props.activeKey }"
+                    t-on-click.prevent="() => this.onTabClick(tab)"
+                    t-esc="tab.label"
+                />
+            </t>
+        </div>
+    </t>
+
+</templates>

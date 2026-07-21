@@ -22,78 +22,44 @@
         sequence="1"/>
 
     <!-- ========================================================= -->
-    <!-- 2. Warehouse (Warehouse Staff, Admin) -->
+    <!-- 2. Warehouse (Warehouse Staff, Admin) — single leaf menu.  -->
+    <!-- Opens Receipts; Stock by Location is reached via the      -->
+    <!-- custom tab strip (no dropdown — see static/src/js).       -->
     <!-- ========================================================= -->
 
     <menuitem
         id="menu_inventory_warehouse"
         name="Warehouse"
         parent="menu_inventory_management_root"
-        groups="inventory_management_poc.group_inventory_warehouse,inventory_management_poc.group_inventory_admin"
-        sequence="2"/>
-
-    <menuitem
-        id="menu_inventory_receipt"
-        name="Receipts"
-        parent="menu_inventory_warehouse"
         action="action_inventory_receipt"
-        groups="inventory_management_poc.group_inventory_warehouse,inventory_management_poc.group_inventory_admin"
-        sequence="1"/>
-
-    <menuitem
-        id="menu_inventory_stock_by_location"
-        name="Stock by Location"
-        parent="menu_inventory_warehouse"
-        action="action_inventory_stock_by_location"
         groups="inventory_management_poc.group_inventory_warehouse,inventory_management_poc.group_inventory_admin"
         sequence="2"/>
 
     <!-- ========================================================= -->
-    <!-- 3. Requests (all roles — single list, tabs are saved       -->
-    <!-- filters: To Approve / To Fulfill / My Requests)            -->
+    <!-- 3. Requests (all roles) — single leaf menu, opens          -->
+    <!-- "To Approve"; To Fulfill / My Requests via the tab strip.  -->
     <!-- ========================================================= -->
 
     <menuitem
         id="menu_inventory_requests"
         name="Requests"
         parent="menu_inventory_management_root"
-        action="action_inventory_store_request"
+        action="action_inventory_store_request_to_approve"
         sequence="3"/>
 
     <!-- ========================================================= -->
-    <!-- 4. Stores (Store Manager — own store, Admin) -->
+    <!-- 4. Stores (Store Manager — own store, Admin) — single      -->
+    <!-- leaf menu, opens Manage Stores; Record Consumption / My    -->
+    <!-- Store Stock via the tab strip. -->
     <!-- ========================================================= -->
 
     <menuitem
         id="menu_inventory_store"
         name="Stores"
         parent="menu_inventory_management_root"
-        groups="inventory_management_poc.group_inventory_store,inventory_management_poc.group_inventory_admin"
-        sequence="4"/>
-
-    <menuitem
-        id="menu_inventory_store_manage"
-        name="Manage Stores"
-        parent="menu_inventory_store"
         action="action_inventory_store"
         groups="inventory_management_poc.group_inventory_store,inventory_management_poc.group_inventory_admin"
-        sequence="1"/>
-
-    <menuitem
-        id="menu_inventory_store_consumption"
-        name="Record Consumption"
-        parent="menu_inventory_store"
-        action="action_inventory_store_consumption"
-        groups="inventory_management_poc.group_inventory_store,inventory_management_poc.group_inventory_admin"
-        sequence="2"/>
-
-    <menuitem
-        id="menu_inventory_store_my_stock"
-        name="My Store Stock"
-        parent="menu_inventory_store"
-        action="action_inventory_stock_by_location"
-        groups="inventory_management_poc.group_inventory_store,inventory_management_poc.group_inventory_admin"
-        sequence="3"/>
+        sequence="4"/>
 
     <!-- ========================================================= -->
     <!-- 5. Low Stock Alerts (all roles — content ships in a later  -->
@@ -107,22 +73,42 @@
         sequence="5"/>
 
     <!-- ========================================================= -->
-    <!-- 6. Configuration (Admin only) -->
+    <!-- 6. Configuration (Admin only) — single leaf menu, opens    -->
+    <!-- Products directly (no dropdown). Wraps the native product  -->
+    <!-- action in our own record so we can set a breadcrumb-       -->
+    <!-- friendly name without renaming shared native data.        -->
     <!-- ========================================================= -->
+
+    <record id="action_inventory_configuration_products" model="ir.actions.act_window">
+
+        <field name="name">Configuration / Products</field>
+
+        <field name="res_model">product.template</field>
+
+        <field name="view_mode">list,form,kanban</field>
+
+        <field name="context">{'search_default_goods': 1, 'default_is_storable': True}</field>
+
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                No product found. Let's create one!
+            </p>
+
+            <p>
+                Track your stock quantities by creating storable products.
+            </p>
+
+        </field>
+
+    </record>
 
     <menuitem
         id="menu_inventory_administration"
         name="Configuration"
         parent="menu_inventory_management_root"
+        action="action_inventory_configuration_products"
         groups="inventory_management_poc.group_inventory_admin"
         sequence="6"/>
-
-    <menuitem
-        id="menu_inventory_configuration_products"
-        name="Products"
-        parent="menu_inventory_administration"
-        action="stock.product_template_action_product"
-        groups="inventory_management_poc.group_inventory_admin"
-        sequence="1"/>
 
 </odoo>

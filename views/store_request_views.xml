@@ -162,14 +162,6 @@
 
                 <field name="requested_by"/>
 
-                <filter name="to_approve" string="To Approve" domain="[('state','=','submitted')]"/>
-
-                <filter name="to_fulfill" string="To Fulfill" domain="[('state','=','approved')]"/>
-
-                <filter name="my_requests" string="My Requests" domain="[('requested_by','=', uid)]"/>
-
-                <separator/>
-
                 <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
 
                 <filter name="fulfilled" string="Fulfilled" domain="[('state','=','fulfilled')]"/>
@@ -197,16 +189,75 @@
 
 
     <!-- ========================================================= -->
-    <!-- Store Request Action -->
+    <!-- Store Request Actions — one per tab (FDD §5.8: "tabs are   -->
+    <!-- saved filters/actions on the same list, not separate       -->
+    <!-- models"). Each carries the tab-group context read by the   -->
+    <!-- custom InventoryTabStrip widget. -->
     <!-- ========================================================= -->
 
-    <record id="action_inventory_store_request" model="ir.actions.act_window">
+    <record id="action_inventory_store_request_to_approve" model="ir.actions.act_window">
 
-        <field name="name">Requests</field>
+        <field name="name">Requests / To Approve</field>
 
         <field name="res_model">inventory.store.request</field>
 
         <field name="view_mode">list,form</field>
+
+        <field name="domain">[('state', '=', 'submitted')]</field>
+
+        <field name="context">{'inventory_tab_group': 'requests', 'inventory_tab_key': 'to_approve'}</field>
+
+        <field name="search_view_id" ref="view_inventory_store_request_search"/>
+
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                No requests waiting for approval.
+            </p>
+
+            <p>
+                Store Managers request stock from the warehouse here.
+            </p>
+
+        </field>
+
+    </record>
+
+    <record id="action_inventory_store_request_to_fulfill" model="ir.actions.act_window">
+
+        <field name="name">Requests / To Fulfill</field>
+
+        <field name="res_model">inventory.store.request</field>
+
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">[('state', '=', 'approved')]</field>
+
+        <field name="context">{'inventory_tab_group': 'requests', 'inventory_tab_key': 'to_fulfill'}</field>
+
+        <field name="search_view_id" ref="view_inventory_store_request_search"/>
+
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                No approved requests waiting to be fulfilled.
+            </p>
+
+        </field>
+
+    </record>
+
+    <record id="action_inventory_store_request_my_requests" model="ir.actions.act_window">
+
+        <field name="name">Requests / My Requests</field>
+
+        <field name="res_model">inventory.store.request</field>
+
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">[('requested_by', '=', uid)]</field>
+
+        <field name="context">{'inventory_tab_group': 'requests', 'inventory_tab_key': 'my_requests', 'default_requested_by': uid}</field>
 
         <field name="search_view_id" ref="view_inventory_store_request_search"/>
 

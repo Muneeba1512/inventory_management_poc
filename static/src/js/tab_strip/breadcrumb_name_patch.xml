@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Our menu actions embed a "Section / Screen" label in their name
+         (e.g. "Stores / Manage Stores") to fake a two-level breadcrumb
+         without reintroducing a dropdown menu (see list_view_patch.xml).
+         The "Section" part (e.g. "Stores") is the page title — left
+         unstyled so it inherits Odoo's native active-breadcrumb title
+         styling (black, standard weight/size). The "Screen" part (e.g.
+         "Manage Stores") is the subtitle, styled with Odoo's own
+         text-muted class to match native breadcrumb grey — no custom
+         colors either way. -->
+    <t t-inherit="web.Breadcrumb.Name" t-inherit-mode="extension">
+        <xpath expr="//t[@t-if='breadcrumb.name']" position="replace">
+            <t t-if="breadcrumb.name and breadcrumb.name.includes(' / ')">
+                <t t-esc="breadcrumb.name.split(' / ')[0]"/>
+                <span class="text-muted fw-normal"> / <t t-esc="breadcrumb.name.split(' / ').slice(1).join(' / ')"/></span>
+            </t>
+            <t t-elif="breadcrumb.name" t-out="breadcrumb.name"/>
+        </xpath>
+    </t>
+
+</templates>

@@ -100,12 +100,14 @@
 
 
     <!-- ========================================================= -->
-    <!-- Stock by Location Action -->
+    <!-- Stock by Location Actions — one per tab context. Both      -->
+    <!-- reuse the same model/views; record rules already scope     -->
+    <!-- what a Store Manager sees on "My Store Stock" (Sprint 2).  -->
     <!-- ========================================================= -->
 
     <record id="action_inventory_stock_by_location" model="ir.actions.act_window">
 
-        <field name="name">Stock by Location</field>
+        <field name="name">Warehouse / Stock by Location</field>
 
         <field name="res_model">inventory.stock.by.location</field>
 
@@ -113,12 +115,34 @@
 
         <field name="search_view_id" ref="view_inventory_stock_by_location_search"/>
 
-        <field name="context">{'search_default_group_by_location': 1}</field>
+        <field name="context">{'search_default_group_by_location': 1, 'inventory_tab_group': 'warehouse', 'inventory_tab_key': 'stock_by_location'}</field>
 
         <field name="help" type="html">
 
             <p>
                 Shows current on-hand quantities per product and location.
+            </p>
+
+        </field>
+
+    </record>
+
+    <record id="action_inventory_my_store_stock" model="ir.actions.act_window">
+
+        <field name="name">Stores / My Store Stock</field>
+
+        <field name="res_model">inventory.stock.by.location</field>
+
+        <field name="view_mode">list,pivot</field>
+
+        <field name="search_view_id" ref="view_inventory_stock_by_location_search"/>
+
+        <field name="context">{'search_default_group_by_location': 1, 'inventory_tab_group': 'stores', 'inventory_tab_key': 'my_store_stock'}</field>
+
+        <field name="help" type="html">
+
+            <p>
+                Shows current on-hand quantities for your store.
             </p>
 
         </field>
