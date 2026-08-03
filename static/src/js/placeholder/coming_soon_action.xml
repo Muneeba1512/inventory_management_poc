@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="inventory_management_poc.ComingSoon">
+        <div class="o_inventory_coming_soon d-flex flex-column align-items-center justify-content-center text-center p-5 h-100">
+            <i class="fa fa-clock-o fa-3x text-muted mb-3" role="img" aria-label="Coming soon"/>
+            <h3 t-esc="title"/>
+            <p class="text-muted" t-esc="message"/>
+        </div>
+    </t>
+
+</templates>

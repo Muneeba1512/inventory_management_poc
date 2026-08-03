@@ -41,6 +41,8 @@ Inventory Management POC
             "inventory_management_poc/static/src/js/tab_strip/list_controller_patch.js",
             "inventory_management_poc/static/src/js/tab_strip/list_view_patch.xml",
             "inventory_management_poc/static/src/js/tab_strip/breadcrumb_name_patch.xml",
+            "inventory_management_poc/static/src/js/placeholder/coming_soon_action.js",
+            "inventory_management_poc/static/src/js/placeholder/coming_soon_action.xml",
         ],
     },
 
