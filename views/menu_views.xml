@@ -12,24 +12,21 @@
         sequence="10"/>
 
     <!-- ========================================================= -->
-    <!-- 1. Dashboard (all roles) — placeholder client action so    -->
-    <!-- the menu actually shows in the nav (an actionless,         -->
-    <!-- childless menu is invisible per Odoo's own visibility      -->
-    <!-- rules, not just empty). Real content ships in a later      -->
-    <!-- sprint. -->
+    <!-- 1. Dashboard (all roles) — KPI cards + activity panels      -->
+    <!-- (FDD §5.4), scoped per role via the same record rules the   -->
+    <!-- underlying models already use. -->
     <!-- ========================================================= -->
 
-    <record id="action_inventory_dashboard_placeholder" model="ir.actions.client">
+    <record id="action_inventory_dashboard" model="ir.actions.client">
         <field name="name">Dashboard</field>
-        <field name="tag">inventory_management_poc.coming_soon</field>
-        <field name="params" eval="{'title': 'Dashboard', 'message': 'KPI cards (on-hand value, open requests, alerts) and activity panels are planned for a future sprint.'}"/>
+        <field name="tag">inventory_management_poc.dashboard</field>
     </record>
 
     <menuitem
         id="menu_inventory_dashboard"
         name="Dashboard"
         parent="menu_inventory_management_root"
-        action="action_inventory_dashboard_placeholder"
+        action="action_inventory_dashboard"
         sequence="1"/>
 
     <!-- ========================================================= -->
@@ -73,22 +70,17 @@
         sequence="4"/>
 
     <!-- ========================================================= -->
-    <!-- 5. Low Stock Alerts (all roles) — same placeholder         -->
-    <!-- pattern as Dashboard; the 7-day/10-day alert engine ships  -->
-    <!-- in Sprint 3. -->
+    <!-- 5. Low Stock Alerts (all roles) — opens Warehouse Alerts;   -->
+    <!-- Store Alerts reached via the tab strip. Warehouse/Store     -->
+    <!-- Staff see everything; Store Manager is scoped to their own  -->
+    <!-- store by the record rule on inventory.low.stock.alert.     -->
     <!-- ========================================================= -->
-
-    <record id="action_inventory_alerts_placeholder" model="ir.actions.client">
-        <field name="name">Low Stock Alerts</field>
-        <field name="tag">inventory_management_poc.coming_soon</field>
-        <field name="params" eval="{'title': 'Low Stock Alerts', 'message': 'Warehouse and store alerts, computed from the 7-day consumption window and 10-day cover threshold, are planned for a future sprint.'}"/>
-    </record>
 
     <menuitem
         id="menu_inventory_alerts"
         name="Low Stock Alerts"
         parent="menu_inventory_management_root"
-        action="action_inventory_alerts_placeholder"
+        action="action_inventory_low_stock_alert_warehouse"
         sequence="5"/>
 
     <!-- ========================================================= -->
@@ -108,9 +100,7 @@
 
         <field name="context">{'search_default_goods': 1, 'default_is_storable': True}</field>
 
-        <field name="help" type="html">
-
-            <p class="o_view_nocontent_smiling_face">
+        <field name="help" type="html">         <p class="o_view_nocontent_smiling_face">
                 No product found. Let's create one!
             </p>
 

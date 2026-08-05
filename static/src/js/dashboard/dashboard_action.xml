@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="inventory_management_poc.Dashboard">
+        <div class="o_inventory_dashboard" t-att-class="props.className">
+
+            <t t-if="!state.data">
+                <div class="o_inventory_empty_state">
+                    <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
+                    <p class="text-muted mt-2 mb-0">Loading dashboard…</p>
+                </div>
+            </t>
+
+            <t t-else="">
+
+                <!-- ===================================================== -->
+                <!-- Page header + filters — stays pinned at the top -->
+                <!-- ===================================================== -->
+
+                <div class="o_inventory_dashboard_topbar">
+                    <div class="o_inventory_dashboard_header">
+                        <div>
+                            <h2 class="o_inventory_dashboard_title mb-0">Dashboard</h2>
+                            <p class="text-muted mb-0" t-if="state.data.store_name" t-esc="state.data.store_name"/>
+                        </div>
+
+                        <div class="o_inventory_dashboard_filters">
+
+                            <div class="o_inventory_filter_group">
+                                <label class="o_inventory_filter_label">Date Range</label>
+                                <select class="form-select form-select-sm" t-on-change="onDateRangeChange">
+                                    <option value="today" t-att-selected="state.dateRange === 'today'">Today</option>
+                                    <option value="7days" t-att-selected="state.dateRange === '7days'">7 Days</option>
+                                    <option value="30days" t-att-selected="state.dateRange === '30days'">30 Days</option>
+                                    <option value="custom" t-att-selected="state.dateRange === 'custom'">Custom</option>
+                                </select>
+                            </div>
+
+                            <t t-if="state.dateRange === 'custom'">
+                                <div class="o_inventory_filter_group">
+                                    <label class="o_inventory_filter_label">From</label>
+                                    <input type="date" class="form-control form-control-sm"
+                                        t-model="state.customFrom" t-on-change="onCustomDateChange"/>
+                                </div>
+                                <div class="o_inventory_filter_group">
+                                    <label class="o_inventory_filter_label">To</label>
+                                    <input type="date" class="form-control form-control-sm"
+                                        t-model="state.customTo" t-on-change="onCustomDateChange"/>
+                                </div>
+                            </t>
+
+                            <div class="o_inventory_filter_group" t-if="state.data.role !== 'store_manager'">
+                                <label class="o_inventory_filter_label">Store</label>
+                                <select class="form-select form-select-sm" t-on-change="onStoreChange">
+                                    <option value="">All Stores</option>
+                                    <t t-foreach="state.data.stores" t-as="store" t-key="store.id">
+                                        <option t-att-value="store.id" t-att-selected="state.storeId === store.id">
+                                            <t t-esc="store.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===================================================== -->
+                <!-- Scrollable body — everything below the control bar -->
+                <!-- ===================================================== -->
+
+                <div class="o_inventory_dashboard_scroll">
+
+                <!-- ===================================================== -->
+                <!-- KPI cards — 4 per row, uniform size -->
+                <!-- ===================================================== -->
+
+                <div class="o_inventory_kpi_grid">
+                    <t t-foreach="state.data.kpis" t-as="kpi" t-key="kpi.key">
+                        <t t-set="meta" t-value="kpiMeta(kpi)"/>
+                        <div class="o_inventory_kpi_card" t-att-class="{ 'o_inventory_kpi_clickable': kpi.action }"
+                            t-on-click="() => this.openKpi(kpi)">
+                            <div class="o_inventory_kpi_top">
+                                <div class="o_inventory_kpi_icon" t-attf-class="bg-{{meta.color}}-subtle text-{{meta.color}}">
+                                    <i t-attf-class="fa {{meta.icon}}"/>
+                                </div>
+                                <div class="o_inventory_kpi_delta" t-if="kpi.delta">
+                                    <span t-att-class="kpi.delta.direction === 'up' ? 'text-success' : 'text-danger'">
+                                        <i t-attf-class="fa {{kpi.delta.direction === 'up' ? 'fa-caret-up' : 'fa-caret-down'}}"/>
+                                        <t t-esc="Math.abs(kpi.delta.pct)"/>%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_inventory_kpi_value" t-esc="formatKpiValue(kpi)"/>
+                            <div class="o_inventory_kpi_label" t-esc="kpi.label"/>
+                            <div class="o_inventory_kpi_sublabel" t-esc="kpi.sublabel"/>
+                            <div class="o_inventory_kpi_health" t-if="kpi.health">
+                                <div class="progress">
+                                    <div class="progress-bar"
+                                        t-att-class="kpi.health.level === 'danger' ? 'bg-danger' : 'bg-success'"
+                                        t-attf-style="width: {{kpi.health.pct}}%"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- ===================================================== -->
+                <!-- Trend (line) + Distribution (donut) — same row, equal size -->
+                <!-- ===================================================== -->
+
+                <div class="o_inventory_chart_row"
+                    t-att-class="{ 'o_inventory_chart_row_single': state.data.role === 'store_manager' }">
+
+                    <div class="o_inventory_card">
+                        <div class="o_inventory_card_header">
+                            <i class="fa fa-line-chart text-primary"/>
+                            <span>Inventory Value Trend</span>
+                        </div>
+                        <div class="o_inventory_card_body">
+                            <div class="o_inventory_chart_wrap" t-att-class="{ 'd-none': !state.data.trend.length }">
+                                <canvas t-ref="trendCanvas"/>
+                            </div>
+                            <div class="o_inventory_empty_state" t-if="!state.data.trend.length">
+                                <i class="fa fa-line-chart text-muted"/>
+                                <p class="mb-0 mt-2">No trend data yet</p>
+                                <p class="text-muted small mb-0">Builds up automatically from today's daily snapshot onward.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="o_inventory_card" t-if="state.data.role !== 'store_manager'">
+                        <div class="o_inventory_card_header">
+                            <i class="fa fa-pie-chart text-primary"/>
+                            <span>Inventory Distribution</span>
+                        </div>
+                        <div class="o_inventory_card_body">
+                            <div class="o_inventory_chart_wrap" t-att-class="{ 'd-none': !state.data.donut.length }">
+                                <canvas t-ref="donutCanvas"/>
+                            </div>
+                            <div class="o_inventory_empty_state" t-if="!state.data.donut.length">
+                                <i class="fa fa-pie-chart text-muted"/>
+                                <p class="mb-0 mt-2">No stock to break down yet</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ===================================================== -->
+                <!-- Low Stock Heatmap -->
+                <!-- ===================================================== -->
+
+                <div class="o_inventory_card mb-4">
+                    <div class="o_inventory_card_header">
+                        <i class="fa fa-th text-primary"/>
+                        <span>Low Stock Heatmap</span>
+                    </div>
+                    <div class="o_inventory_card_body">
+                        <div class="o_inventory_empty_state" t-if="!state.data.heatmap.length">
+                            <i class="fa fa-th text-muted"/>
+                            <p class="mb-0 mt-2">No watched locations yet</p>
+                        </div>
+                        <div class="o_inventory_heatmap_grid" t-if="state.data.heatmap.length">
+                            <div class="o_inventory_heatmap_chip" t-foreach="state.data.heatmap" t-as="row" t-key="row.location"
+                                t-att-class="'o_inventory_heatmap_' + row.level">
+                                <div class="o_inventory_heatmap_top">
+                                    <span t-esc="healthMeta(row.level).icon"/>
+                                    <span class="fw-bold" t-esc="row.location"/>
+                                </div>
+                                <div class="small text-muted" t-esc="healthMeta(row.level).label"/>
+                                <div class="small" t-if="row.days_of_cover !== null">
+                                    <t t-esc="row.days_of_cover.toFixed(1)"/> days of cover
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===================================================== -->
+                <!-- Requests Awaiting Action + Latest Low Stock Alerts -->
+                <!-- ===================================================== -->
+
+                <div class="o_inventory_panel_row mb-4">
+
+                    <div class="o_inventory_card">
+                        <div class="o_inventory_card_header">
+                            <i class="fa fa-inbox text-primary"/>
+                            <span>Requests Awaiting Action</span>
+                        </div>
+                        <div class="o_inventory_card_body">
+
+                            <div class="o_inventory_widget_section">
+                                <h6 class="o_inventory_widget_subhead">Pending Approval</h6>
+                                <div class="o_inventory_empty_state o_inventory_empty_state_sm" t-if="!state.data.requests_panel.pending_approval.length">
+                                    Nothing pending approval.
+                                </div>
+                                <div class="o_inventory_widget_row" t-foreach="state.data.requests_panel.pending_approval" t-as="request" t-key="request.id"
+                                    t-on-click="() => this.openRequest(request.id)">
+                                    <div class="o_inventory_widget_icon bg-info-subtle text-info"><i class="fa fa-file-text-o"/></div>
+                                    <div class="o_inventory_widget_text">
+                                        <div class="fw-bold" t-esc="request.name"/>
+                                        <div class="small text-muted" t-esc="request.store"/>
+                                    </div>
+                                    <span class="badge text-bg-info">submitted</span>
+                                </div>
+                            </div>
+
+                            <div class="o_inventory_widget_section">
+                                <h6 class="o_inventory_widget_subhead">Pending Fulfillment</h6>
+                                <div class="o_inventory_empty_state o_inventory_empty_state_sm" t-if="!state.data.requests_panel.pending_fulfillment.length">
+                                    Nothing pending fulfillment.
+                                </div>
+                                <div class="o_inventory_widget_row" t-foreach="state.data.requests_panel.pending_fulfillment" t-as="request" t-key="request.id"
+                                    t-on-click="() => this.openRequest(request.id)">
+                                    <div class="o_inventory_widget_icon bg-primary-subtle text-primary"><i class="fa fa-file-text-o"/></div>
+                                    <div class="o_inventory_widget_text">
+                                        <div class="fw-bold" t-esc="request.name"/>
+                                        <div class="small text-muted" t-esc="request.store"/>
+                                    </div>
+                                    <span class="badge text-bg-primary">approved</span>
+                                </div>
+                            </div>
+
+                            <div class="o_inventory_widget_section">
+                                <h6 class="o_inventory_widget_subhead">Recently Rejected</h6>
+                                <div class="o_inventory_empty_state o_inventory_empty_state_sm" t-if="!state.data.requests_panel.recently_rejected.length">
+                                    Nothing recently rejected.
+                                </div>
+                                <div class="o_inventory_widget_row" t-foreach="state.data.requests_panel.recently_rejected" t-as="request" t-key="request.id"
+                                    t-on-click="() => this.openRequest(request.id)">
+                                    <div class="o_inventory_widget_icon bg-danger-subtle text-danger"><i class="fa fa-file-text-o"/></div>
+                                    <div class="o_inventory_widget_text">
+                                        <div class="fw-bold" t-esc="request.name"/>
+                                        <div class="small text-muted" t-esc="request.store"/>
+                                    </div>
+                                    <span class="badge text-bg-danger">rejected</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="o_inventory_card">
+                        <div class="o_inventory_card_header">
+                            <i class="fa fa-exclamation-triangle text-primary"/>
+                            <span>Latest Low Stock Alerts</span>
+                        </div>
+                        <div class="o_inventory_card_body">
+                            <div class="o_inventory_empty_state" t-if="!state.data.alerts_panel.length">
+                                <i class="fa fa-check-circle text-success"/>
+                                <p class="mb-0 mt-2">No active alerts</p>
+                                <p class="text-muted small mb-0">Everything is within its cover threshold.</p>
+                            </div>
+                            <div class="o_inventory_widget_row" t-foreach="state.data.alerts_panel" t-as="alert" t-key="alert.id"
+                                t-on-click="() => this.openAlertsForScope(alert.scope)">
+                                <div class="o_inventory_widget_icon bg-danger-subtle text-danger"><i class="fa fa-exclamation-triangle"/></div>
+                                <div class="o_inventory_widget_text">
+                                    <div class="fw-bold" t-esc="alert.product"/>
+                                    <div class="small text-muted" t-esc="alert.location"/>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold" t-esc="alert.days_of_cover.toFixed(1) + ' days'"/>
+                                    <span class="badge text-bg-danger">active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ===================================================== -->
+                <!-- Recent Activity -->
+                <!-- ===================================================== -->
+
+                <div class="o_inventory_card">
+                    <div class="o_inventory_card_header">
+                        <i class="fa fa-clock-o text-primary"/>
+                        <span>Recent Activity</span>
+                    </div>
+                    <div class="o_inventory_card_body">
+                        <div class="o_inventory_empty_state" t-if="!state.data.activity.length">
+                            <i class="fa fa-clock-o text-muted"/>
+                            <p class="mb-0 mt-2">No recent activity</p>
+                        </div>
+                        <t t-set="meta_cache" t-value="{}"/>
+                        <div class="o_inventory_activity_row" t-foreach="state.data.activity" t-as="event" t-key="event_index">
+                            <t t-set="a_meta" t-value="activityMeta(event)"/>
+                            <div class="o_inventory_widget_icon" t-attf-class="bg-{{a_meta.color}}-subtle text-{{a_meta.color}}">
+                                <i t-attf-class="fa {{a_meta.icon}}"/>
+                            </div>
+                            <div class="o_inventory_widget_text">
+                                <span t-esc="event.text"/>
+                            </div>
+                            <span class="text-muted small" t-esc="formatEventDate(event.date)"/>
+                        </div>
+                    </div>
+                </div>
+
+                </div>
+
+            </t>
+
+        </div>
+    </t>
+
+</templates>

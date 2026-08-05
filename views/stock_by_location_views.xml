@@ -26,6 +26,17 @@
 
                 <field name="reserved_quantity"/>
 
+                <field name="days_of_cover" invisible="not alert_status or alert_status == 'not_enough_data'"/>
+
+                <field
+                    name="alert_status"
+                    string="Cover Status"
+                    widget="badge"
+                    invisible="not alert_status"
+                    decoration-danger="alert_status == 'active'"
+                    decoration-success="alert_status == 'resolved'"
+                    decoration-muted="alert_status == 'not_enough_data'"/>
+
             </list>
 
         </field>

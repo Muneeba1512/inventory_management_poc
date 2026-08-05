@@ -53,4 +53,16 @@ export const INVENTORY_TAB_GROUPS = {
             action: "inventory_management_poc.action_inventory_my_store_stock",
         },
     ],
+    alerts: [
+        {
+            key: "warehouse_alerts",
+            label: "Warehouse Alerts",
+            action: "inventory_management_poc.action_inventory_low_stock_alert_warehouse",
+        },
+        {
+            key: "store_alerts",
+            label: "Store Alerts",
+            action: "inventory_management_poc.action_inventory_low_stock_alert_store",
+        },
+    ],
 };

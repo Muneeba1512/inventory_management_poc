@@ -21,6 +21,7 @@ Inventory Management POC
         "security/record_rules.xml",
 
         "data/sequence.xml",
+        "data/ir_cron.xml",
 
         "views/store_views.xml",
         "views/receipt_views.xml",
@@ -29,12 +30,14 @@ Inventory Management POC
         "views/store_request_views.xml",
         "wizard/store_request_reject_wizard_views.xml",
         "views/store_consumption_views.xml",
+        "views/low_stock_alert_views.xml",
         "views/menu_views.xml",
     ],
 
     "assets": {
         "web.assets_backend": [
             "inventory_management_poc/static/src/scss/inventory_tab_strip.scss",
+            "inventory_management_poc/static/src/scss/dashboard.scss",
             "inventory_management_poc/static/src/js/tab_strip/inventory_tabs_config.js",
             "inventory_management_poc/static/src/js/tab_strip/inventory_tab_strip.js",
             "inventory_management_poc/static/src/js/tab_strip/inventory_tab_strip.xml",
@@ -43,6 +46,8 @@ Inventory Management POC
             "inventory_management_poc/static/src/js/tab_strip/breadcrumb_name_patch.xml",
             "inventory_management_poc/static/src/js/placeholder/coming_soon_action.js",
             "inventory_management_poc/static/src/js/placeholder/coming_soon_action.xml",
+            "inventory_management_poc/static/src/js/dashboard/dashboard_action.js",
+            "inventory_management_poc/static/src/js/dashboard/dashboard_action.xml",
         ],
     },
 

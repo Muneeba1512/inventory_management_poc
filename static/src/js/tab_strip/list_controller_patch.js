@@ -13,4 +13,7 @@ patch(ListController.prototype, {
     get inventoryTabKey() {
         return this.props.context && this.props.context.inventory_tab_key;
     },
+    get inventoryInfoBanner() {
+        return this.props.context && this.props.context.inventory_info_banner;
+    },
 });

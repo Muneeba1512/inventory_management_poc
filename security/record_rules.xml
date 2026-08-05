@@ -41,4 +41,18 @@
         <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
     </record>
 
+    <record id="rule_low_stock_alert_own_store" model="ir.rule">
+        <field name="name">Store Manager: own store alerts only</field>
+        <field name="model_id" ref="model_inventory_low_stock_alert"/>
+        <field name="domain_force">[('store_id.store_manager_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
+    </record>
+
+    <record id="rule_value_snapshot_own_store" model="ir.rule">
+        <field name="name">Store Manager: own store value snapshots only</field>
+        <field name="model_id" ref="model_inventory_value_snapshot"/>
+        <field name="domain_force">[('store_id.store_manager_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_inventory_store'))]"/>
+    </record>
+
 </odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="ir_cron_low_stock_alert" model="ir.cron">
+        <field name="name">Inventory: Compute Low Stock Alerts</field>
+        <field name="model_id" ref="model_inventory_low_stock_alert"/>
+        <field name="state">code</field>
+        <field name="code">model._compute_alerts()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="ir_cron_inventory_value_snapshot" model="ir.cron">
+        <field name="name">Inventory: Snapshot On-Hand Value (Dashboard Trend)</field>
+        <field name="model_id" ref="model_inventory_value_snapshot"/>
+        <field name="state">code</field>
+        <field name="code">model._compute_snapshot()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>

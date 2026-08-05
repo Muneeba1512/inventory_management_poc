@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- Low Stock Alert List View (read-only — system generated) -->
+    <!-- ========================================================= -->
+
+    <record id="view_inventory_low_stock_alert_tree" model="ir.ui.view">
+        <field name="name">inventory.low.stock.alert.tree</field>
+        <field name="model">inventory.low.stock.alert</field>
+        <field name="arch" type="xml">
+
+            <list string="Low Stock Alerts" create="false" edit="false" delete="false">
+
+                <field name="product_id"/>
+
+                <field name="location_id" string="Location / Store"/>
+
+                <field name="current_qty"/>
+
+                <field name="avg_daily_consumption"/>
+
+                <field name="days_of_cover" invisible="status == 'not_enough_data'"/>
+
+                <field
+                    name="status"
+                    widget="badge"
+                    decoration-danger="status == 'active'"
+                    decoration-success="status == 'resolved'"
+                    decoration-muted="status == 'not_enough_data'"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- Low Stock Alert Search View -->
+    <!-- ========================================================= -->
+
+    <record id="view_inventory_low_stock_alert_search" model="ir.ui.view">
+        <field name="name">inventory.low.stock.alert.search</field>
+        <field name="model">inventory.low.stock.alert</field>
+        <field name="arch" type="xml">
+
+            <search>
+
+                <field name="product_id"/>
+
+                <field name="location_id"/>
+
+                <filter name="active" string="Active" domain="[('status','=','active')]"/>
+
+                <filter name="not_enough_data" string="Not Enough Data" domain="[('status','=','not_enough_data')]"/>
+
+                <group>
+
+                    <filter
+                        name="group_by_location"
+                        string="Location"
+                        context="{'group_by':'location_id'}"/>
+
+                    <filter
+                        name="group_by_status"
+                        string="Status"
+                        context="{'group_by':'status'}"/>
+
+                </group>
+
+            </search>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- Low Stock Alert Actions — Warehouse Alerts / Store Alerts  -->
+    <!-- tabs (FDD §5.13), same pattern as the Requests tabs.       -->
+    <!-- ========================================================= -->
+
+    <record id="action_inventory_low_stock_alert_warehouse" model="ir.actions.act_window">
+
+        <field name="name">Low Stock Alerts / Warehouse Alerts</field>
+
+        <field name="res_model">inventory.low.stock.alert</field>
+
+        <field name="view_mode">list</field>
+
+        <field name="domain">[('scope', '=', 'warehouse')]</field>
+
+        <field name="context">{'inventory_tab_group': 'alerts', 'inventory_tab_key': 'warehouse_alerts', 'inventory_info_banner': 'Alerts auto-resolve above 10 days cover; “Not Enough Data” when there is no history. Window = 7 days, threshold = 10 days (fixed).'}</field>
+
+        <field name="search_view_id" ref="view_inventory_low_stock_alert_search"/>
+
+        <field name="help" type="html">
+
+            <p>
+                No warehouse alerts right now — every product has at least 10 days of cover, or not
+                enough history yet to project.
+            </p>
+
+        </field>
+
+    </record>
+
+    <record id="action_inventory_low_stock_alert_store" model="ir.actions.act_window">
+
+        <field name="name">Low Stock Alerts / Store Alerts</field>
+
+        <field name="res_model">inventory.low.stock.alert</field>
+
+        <field name="view_mode">list</field>
+
+        <field name="domain">[('scope', '=', 'store')]</field>
+
+        <field name="context">{'inventory_tab_group': 'alerts', 'inventory_tab_key': 'store_alerts', 'inventory_info_banner': 'Alerts auto-resolve above 10 days cover; “Not Enough Data” when there is no history. Window = 7 days, threshold = 10 days (fixed).'}</field>
+
+        <field name="search_view_id" ref="view_inventory_low_stock_alert_search"/>
+
+        <field name="help" type="html">
+
+            <p>
+                No store alerts right now — every product has at least 10 days of cover, or not enough
+                history yet to project.
+            </p>
+
+        </field>
+
+    </record>
+
+</odoo>
