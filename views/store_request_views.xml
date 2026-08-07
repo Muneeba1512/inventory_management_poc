@@ -10,19 +10,26 @@
         <field name="model">inventory.store.request</field>
         <field name="arch" type="xml">
 
+            <!-- Column-width standard (module-wide, native Odoo `width`
+                 attribute): Medium=140px, Small=90px. The identity column
+                 (Reference) deliberately has NO fixed width so it absorbs
+                 leftover space (native Odoo pattern) — fixing every
+                 column leaves nothing to absorb it, which stretches all
+                 columns uniformly and breaks badge/header alignment. -->
             <list string="Store Requests">
 
                 <field name="name"/>
 
-                <field name="store_id"/>
+                <field name="store_id" width="140px"/>
 
-                <field name="requested_by"/>
+                <field name="requested_by" width="140px"/>
 
-                <field name="line_count" string="Items"/>
+                <field name="line_count" string="Items" width="90px"/>
 
                 <field
                     name="state"
                     widget="badge"
+                    width="140px"
                     decoration-muted="state == 'draft'"
                     decoration-info="state == 'submitted'"
                     decoration-primary="state == 'approved'"
@@ -119,15 +126,19 @@
 
                             <field name="line_ids" readonly="state != 'draft'">
 
+                                <!-- Column-width standard: Medium=140px,
+                                     Small=90px. Product deliberately has
+                                     NO fixed width so it absorbs leftover
+                                     space (native Odoo pattern). -->
                                 <list editable="bottom" decoration-danger="qty_requested &gt; qty_available" decoration-success="qty_requested &lt;= qty_available">
 
                                     <field name="product_id"/>
 
-                                    <field name="qty_requested"/>
+                                    <field name="qty_requested" width="90px"/>
 
-                                    <field name="uom_id"/>
+                                    <field name="uom_id" width="140px"/>
 
-                                    <field name="qty_available"/>
+                                    <field name="qty_available" width="90px"/>
 
                                 </list>
 

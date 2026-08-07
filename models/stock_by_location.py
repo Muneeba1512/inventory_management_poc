@@ -45,6 +45,23 @@ class InventoryStockByLocation(models.Model):
         string="Cover Status",
         compute="_compute_alert_info",
     )
+    unit_cost = fields.Monetary(
+        string="Unit Cost",
+        compute="_compute_financials",
+        currency_field="currency_id",
+        help="The product's current cost (standard_price).",
+    )
+    total_value = fields.Monetary(
+        string="Total Value",
+        compute="_compute_financials",
+        currency_field="currency_id",
+        help="On Hand quantity x Unit Cost.",
+    )
+    currency_id = fields.Many2one(
+        "res.currency",
+        string="Currency",
+        compute="_compute_currency_id",
+    )
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
@@ -88,3 +105,17 @@ class InventoryStockByLocation(models.Model):
             alert = alert_by_key.get((row.product_id.id, row.location_id.id))
             row.days_of_cover = alert.days_of_cover if alert else 0.0
             row.alert_status = alert.status if alert else False
+
+    # Reuses the product's existing cost (standard_price) — calculated
+    # dynamically on read, nothing is stored or duplicated.
+    @api.depends("quantity", "product_id.standard_price")
+    def _compute_financials(self):
+        for row in self:
+            row.unit_cost = row.product_id.standard_price
+            row.total_value = row.quantity * row.product_id.standard_price
+
+    @api.depends_context("company")
+    def _compute_currency_id(self):
+        currency = self.env.company.currency_id
+        for row in self:
+            row.currency_id = currency

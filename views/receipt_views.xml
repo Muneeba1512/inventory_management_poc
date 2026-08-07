@@ -10,6 +10,12 @@
         <field name="model">inventory.receipt</field>
         <field name="arch" type="xml">
 
+            <!-- Column-width standard (module-wide, native Odoo `width`
+                 attribute): Medium=140px, Small=90px. The identity column
+                 (Reference) deliberately has NO fixed width so it absorbs
+                 leftover space (native Odoo pattern) — fixing every
+                 column leaves nothing to absorb it, which stretches all
+                 columns uniformly and breaks badge/header alignment. -->
             <list string="Receipts">
 
                 <field name="name"/>
@@ -17,16 +23,18 @@
                 <field
                     name="receipt_type"
                     widget="badge"
+                    width="140px"
                     decoration-muted="receipt_type in ('manual', 'barcode')"
                     decoration-warning="receipt_type == 'ai'"/>
 
-                <field name="warehouse_id"/>
+                <field name="warehouse_id" width="140px"/>
 
                 <field name="create_date" string="Date"/>
 
                 <field
                     name="state"
                     widget="badge"
+                    width="140px"
                     decoration-muted="state == 'draft'"
                     decoration-success="state == 'done'"/>
 
@@ -100,13 +108,23 @@
 
                             <field name="line_ids" readonly="state != 'draft'">
 
+                                <!-- Column-width standard: Medium=140px,
+                                     Small=90px. Product deliberately has
+                                     NO fixed width so it absorbs leftover
+                                     space (native Odoo pattern). -->
                                 <list editable="bottom">
 
                                     <field name="product_id"/>
 
-                                    <field name="quantity"/>
+                                    <field name="quantity" width="90px" sum="Total Quantity"/>
 
-                                    <field name="uom_id"/>
+                                    <field name="uom_id" width="140px"/>
+
+                                    <field name="currency_id" column_invisible="1"/>
+
+                                    <field name="unit_cost" widget="monetary" width="140px" readonly="1"/>
+
+                                    <field name="line_total" widget="monetary" width="140px" sum="Total" readonly="1"/>
 
                                 </list>
 

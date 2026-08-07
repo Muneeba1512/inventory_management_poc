@@ -10,21 +10,35 @@
         <field name="model">inventory.low.stock.alert</field>
         <field name="arch" type="xml">
 
+            <!-- Column-width standard (module-wide, native Odoo `width`
+                 attribute): Medium=140px, Small=90px. Columns grouped
+                 Inventory -> Financial -> Stock Health. The identity
+                 column (Product) deliberately has NO fixed width so it
+                 absorbs leftover space (native Odoo pattern) — fixing
+                 every column leaves nothing to absorb it, which stretches
+                 all columns uniformly and breaks badge/header alignment. -->
             <list string="Low Stock Alerts" create="false" edit="false" delete="false">
 
                 <field name="product_id"/>
 
-                <field name="location_id" string="Location / Store"/>
+                <field name="location_id" string="Location / Store" width="140px"/>
 
-                <field name="current_qty"/>
+                <field name="current_qty" width="90px" sum="Total On Hand"/>
 
-                <field name="avg_daily_consumption"/>
+                <field name="avg_daily_consumption" width="90px" optional="hide"/>
 
-                <field name="days_of_cover" invisible="status == 'not_enough_data'"/>
+                <field name="currency_id" column_invisible="1"/>
+
+                <field name="unit_cost" widget="monetary" width="140px" optional="hide"/>
+
+                <field name="value_at_risk" widget="monetary" width="140px" sum="Total Value at Risk"/>
+
+                <field name="days_of_cover" width="90px" invisible="status == 'not_enough_data'"/>
 
                 <field
                     name="status"
                     widget="badge"
+                    width="140px"
                     decoration-danger="status == 'active'"
                     decoration-success="status == 'resolved'"
                     decoration-muted="status == 'not_enough_data'"/>
@@ -95,7 +109,7 @@
 
         <field name="help" type="html">
 
-            <p>
+            <p class="o_view_nocontent_smiling_face">
                 No warehouse alerts right now — every product has at least 10 days of cover, or not
                 enough history yet to project.
             </p>
@@ -120,7 +134,7 @@
 
         <field name="help" type="html">
 
-            <p>
+            <p class="o_view_nocontent_smiling_face">
                 No store alerts right now — every product has at least 10 days of cover, or not enough
                 history yet to project.
             </p>

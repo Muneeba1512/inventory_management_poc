@@ -1,0 +1,24 @@
+// Module-wide list-view design standard.
+//
+// Odoo already right-aligns numeric/monetary column headers to match their
+// right-aligned values natively (FIELD_CLASSES + isNumericColumn() in
+// list_renderer.js add `o_list_number_th` to the <th> automatically for
+// float/integer/monetary columns). There is no equivalent native behavior
+// for badge/status columns: Odoo centers nothing by default, and a custom
+// `class` attribute placed on a <field> in the arch only reaches the data
+// <td> (see getCellClass() in list_renderer.js), never the header <th>
+// (getColumnClass() does not read column.attrs.class). So a badge column's
+// header label renders left-aligned while its pill value is centered below
+// it — the header and its own data visually disagree.
+//
+// The one thing every widget="badge" column's <th> AND <td> both reliably
+// receive from Odoo itself is the `o_badge_cell` class (getColumnClass()/
+// getCellClass() both push `o_${column.widget}_cell`). Centering through
+// that native class — instead of inventing a new one — is what lets this
+// rule apply identically to every badge/status column in this module
+// (Cover Status, Low Stock Status, Receiving Method, Receipt/Request/
+// Consumption Status) with zero per-view CSS, and to any future one added
+// the same way, without touching Odoo core.
+.o_list_renderer .o_badge_cell {
+    text-align: center;
+}

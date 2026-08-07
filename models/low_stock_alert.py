@@ -57,10 +57,45 @@ class InventoryLowStockAlert(models.Model):
     )
     last_computed = fields.Datetime(string="Last Computed", readonly=True)
 
+    # Financials — reuses the product's existing cost (standard_price),
+    # calculated dynamically, nothing duplicated.
+    unit_cost = fields.Monetary(
+        string="Unit Cost",
+        compute="_compute_financials",
+        currency_field="currency_id",
+    )
+    value_at_risk = fields.Monetary(
+        string="Value at Risk",
+        compute="_compute_financials",
+        currency_field="currency_id",
+        help="On Hand quantity x Unit Cost.",
+    )
+    currency_id = fields.Many2one(
+        "res.currency",
+        string="Currency",
+        compute="_compute_currency_id",
+    )
+
     _uniq_product_location = models.Constraint(
         "unique(product_id, location_id)",
         "Only one alert record is kept per product and location.",
     )
+
+    # ==========================================================
+    # Financials
+    # ==========================================================
+
+    @api.depends("current_qty", "product_id.standard_price")
+    def _compute_financials(self):
+        for alert in self:
+            alert.unit_cost = alert.product_id.standard_price
+            alert.value_at_risk = alert.current_qty * alert.product_id.standard_price
+
+    @api.depends_context("company")
+    def _compute_currency_id(self):
+        currency = self.env.company.currency_id
+        for alert in self:
+            alert.currency_id = currency
 
     # ==========================================================
     # Computation (TDD §7 — same routine for warehouse and store)

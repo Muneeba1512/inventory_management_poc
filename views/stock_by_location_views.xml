@@ -10,28 +10,43 @@
         <field name="model">inventory.stock.by.location</field>
         <field name="arch" type="xml">
 
+            <!-- Column-width standard (module-wide, native Odoo `width`
+                 attribute — see other list views for the same 3 tiers):
+                 Medium=140px (references, monetary, badges), Small=90px
+                 (quantities). The identity column (Product) deliberately
+                 has NO fixed width, so it is the one column that absorbs
+                 leftover space — matching native Odoo (e.g. Sales Order
+                 Lines never fixes the Product column). Fixing every
+                 column's width leaves nothing to absorb the browser's
+                 extra space, which stretches ALL columns uniformly
+                 (including badges) and breaks header/value alignment. -->
             <list string="Stock by Location" create="false" edit="false" delete="false">
 
                 <field name="product_id"/>
 
-                <field name="location_id"/>
+                <field name="location_id" width="140px"/>
 
-                <field name="warehouse_id"/>
+                <field name="warehouse_id" width="140px"/>
 
-                <field name="store_id"/>
+                <field name="store_id" width="140px"/>
 
-                <field name="quantity"/>
+                <field name="quantity" width="90px" sum="Total On Hand"/>
 
-                <field name="uom_id"/>
+                <field name="uom_id" width="140px" optional="hide"/>
 
-                <field name="reserved_quantity"/>
+                <field name="reserved_quantity" width="90px" optional="hide"/>
 
-                <field name="days_of_cover" invisible="not alert_status or alert_status == 'not_enough_data'"/>
+                <field name="currency_id" column_invisible="1"/>
+
+                <field name="total_value" widget="monetary" width="140px" sum="Total Value"/>
+
+                <field name="days_of_cover" width="90px" invisible="not alert_status or alert_status == 'not_enough_data'"/>
 
                 <field
                     name="alert_status"
                     string="Cover Status"
                     widget="badge"
+                    width="140px"
                     invisible="not alert_status"
                     decoration-danger="alert_status == 'active'"
                     decoration-success="alert_status == 'resolved'"

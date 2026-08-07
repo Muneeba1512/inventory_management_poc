@@ -48,6 +48,40 @@ class InventoryReceiptLine(models.Model):
     )
 
     # ==========================================================
+    # Financials — reuses the product's existing cost
+    # (standard_price), calculated dynamically, nothing duplicated.
+    # ==========================================================
+
+    unit_cost = fields.Monetary(
+        string="Unit Cost",
+        compute="_compute_financials",
+        currency_field="currency_id",
+    )
+    line_total = fields.Monetary(
+        string="Line Total",
+        compute="_compute_financials",
+        currency_field="currency_id",
+        help="Quantity x Unit Cost.",
+    )
+    currency_id = fields.Many2one(
+        "res.currency",
+        string="Currency",
+        compute="_compute_currency_id",
+    )
+
+    @api.depends("quantity", "product_id.standard_price")
+    def _compute_financials(self):
+        for line in self:
+            line.unit_cost = line.product_id.standard_price
+            line.line_total = line.quantity * line.product_id.standard_price
+
+    @api.depends_context("company")
+    def _compute_currency_id(self):
+        currency = self.env.company.currency_id
+        for line in self:
+            line.currency_id = currency
+
+    # ==========================================================
     # Constraints
     # ==========================================================
 
