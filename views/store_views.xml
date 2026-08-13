@@ -10,21 +10,22 @@
         <field name="model">inventory.store</field>
         <field name="arch" type="xml">
 
-            <!-- Column-width standard (module-wide, native Odoo `width`
-                 attribute): Medium=140px. The identity column (Name)
-                 deliberately has NO fixed width so it absorbs leftover
-                 space (native Odoo pattern) — fixing every column leaves
-                 nothing to absorb it, which stretches all columns
-                 uniformly and breaks header/value alignment. -->
+            <!-- Same fixed-width pattern as the Warehouse -> Receipts and
+                 Requests lists: all four columns get an explicit native
+                 `width`, roughly quartered (~25% each), with Store Name
+                 slightly wider. All four fields are Char/Many2one, which
+                 Odoo already left-aligns by default (no numeric/badge
+                 styling applies to any of them), so no CSS is needed for
+                 alignment here — pure native XML width attributes. -->
             <list string="Stores">
 
-                <field name="name"/>
+                <field name="name" width="200px"/>
 
-                <field name="store_code" width="140px"/>
+                <field name="store_code" width="190px"/>
 
-                <field name="store_manager_id" width="140px"/>
+                <field name="store_manager_id" width="190px"/>
 
-                <field name="stock_location_id" width="140px"/>
+                <field name="stock_location_id" width="190px"/>
 
             </list>
 

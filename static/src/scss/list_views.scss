@@ -22,3 +22,225 @@
 .o_list_renderer .o_badge_cell {
     text-align: center;
 }
+
+// Store Requests "Items" column (inventory.store.request.line_count) is a
+// deliberate, explicitly-requested exception to Odoo's "numeric columns
+// right-align" default for that one list: it should read left-aligned
+// like Reference/Store/Requested By, not right-aligned or centered.
+//
+// The data <td> is handled via `class="text-start"` on the <field> in
+// the arch, which reaches the <td> (getCellClass() in list_renderer.js).
+// Bootstrap's .text-start compiles with !important — verified directly
+// against the compiled web.assets_backend.css, where the native rule
+// (`...tbody > tr > td...o_list_number { text-align: right; }`) has no
+// !important, so .text-start always wins regardless of its lower
+// specificity.
+//
+// The <th> header is the part a <field>'s class attribute can never
+// reach (getColumnClass() does not read column.attrs.class — confirmed
+// in source), so "Items" keeps Odoo's native right-align there with
+// nothing to override it unless done separately. `line_count` is a
+// field name unique to this one model (inventory.store.request), so
+// `data-name="line_count"` (added natively to every <th> — see
+// `t-att-data-name="column.name"` in list_renderer.xml) only ever
+// matches that one header, never any other numeric field or list view.
+// !important is required because Odoo's own .o_list_number_th rule is
+// compiled three classes deep
+// (.o_list_renderer .o_list_table thead .o_list_number_th), which
+// out-specifies a flat selector.
+th[data-name="line_count"] {
+    text-align: left !important;
+}
+
+// Store Consumption "Quantity" column (inventory.store.consumption.
+// total_quantity) — a deliberate, explicitly requested left-align
+// exception to Odoo's numeric-column default.
+//
+// <th>/<td> are targeted directly by their own native field-identifying
+// attribute (`data-name` on <th>, plain `name` on <td> — see
+// `t-att-data-name="column.name"` and `t-att-name="column.name"` in
+// list_renderer.xml) rather than a `class` attribute on the <field> in
+// the arch (tried first, unreliable for the <td> — see the Low Stock
+// Alerts rule below for why).
+//
+// The <th> ALSO needs `*` here, which the <td> does not: confirmed via
+// live DOM inspection that Odoo's header template does not put the
+// label text directly in the <th> — it's nested inside
+// `<span class="... o_list_number_th">` inside a flex wrapper div. That
+// inner span carries the `o_list_number_th` class (and its native
+// `text-align: right`) DIRECTLY on itself, not merely inherited from
+// the <th>. A directly-applied rule on an element always wins over an
+// inherited value from its ancestor, regardless of !important on the
+// ancestor — inheritance only applies when nothing more specific
+// targets the element itself. So `text-align: left !important` on the
+// <th> alone correctly makes the <th>'s OWN computed style "left" (true,
+// verified) while having zero effect on the span's own text — measured
+// via Range.getBoundingClientRect() on the actual text node: the
+// header text rendered 135px to the right of the value text before this
+// fix. The <td> never had this problem: "3.00" is direct text content
+// of the <td> (no nested span), so text-align on the <td> itself
+// controls it directly.
+th[data-name="total_quantity"],
+th[data-name="total_quantity"] *,
+td[name="total_quantity"] {
+    text-align: left !important;
+}
+
+// Store Consumption's Status column is NOT overridden here — it stays
+// centered via the module-wide .o_badge_cell rule above, same as every
+// other Status/badge column in this module (Requests, Receipts, Cover
+// Status, Low Stock Status). Only Quantity is a per-view exception on
+// this list.
+
+// ============================================================
+// Low Stock Alerts (Warehouse Alerts + Store Alerts — one shared view,
+// see views/low_stock_alert_views.xml). All selectors below use either
+// a field name unique to inventory.low.stock.alert (current_qty,
+// value_at_risk, status) directly, or a `:has(th/td[...="current_qty"])`
+// scope for field names that collide with other models/lists
+// (product_id, location_id, days_of_cover) — current_qty is confirmed
+// unique to this one model, so every rule here can only ever match this
+// one list's table, never any other screen.
+// ============================================================
+
+// Column widths matching the requested 26/18/12/14/14/14 ratio for
+// Product/Location/On Hand/Value at Risk/Days of Cover/Status.
+//
+// This was FIRST attempted as literal `calc((100% - 80px) * 0.26)` etc.
+// (percentage-based, as requested) and verified live via Chrome DevTools
+// Protocol: the CSSOM confirmed the rule matched and won with
+// !important (beating the JS's non-important inline pixel width, same
+// mechanism as every text-align override in this file) — but the
+// resulting *rendered* width was NOT proportional; all six columns
+// rendered equal (~250px) regardless of their different declared
+// percentages. This is a genuine `table-layout: fixed` limitation, not
+// a specificity/scoping problem: per spec, fixed layout takes its
+// column widths as a *hint* from the first row, and browsers do not
+// reliably honor differing %/calc()-mixed widths across sibling cells
+// in that mode — they tend to collapse toward equal distribution.
+// Plain pixel values do not have this problem (proven — this is the
+// same mechanism already working correctly for every other list in
+// this module). These pixel values are the 26/18/12/14/14/14 ratio
+// computed at a 1420px baseline (a representative content width after
+// subtracting the ~80px fixed checkbox + settings columns), so the
+// same *proportions* requested are preserved even though the literal
+// unit is px rather than %.
+table:has(th[data-name="current_qty"]) th[data-name="product_id"],
+table:has(td[name="current_qty"]) td[name="product_id"] {
+    width: 380px !important;
+}
+table:has(th[data-name="current_qty"]) th[data-name="location_id"],
+table:has(td[name="current_qty"]) td[name="location_id"] {
+    width: 260px !important;
+}
+th[data-name="current_qty"],
+td[name="current_qty"] {
+    width: 175px !important;
+}
+th[data-name="value_at_risk"],
+td[name="value_at_risk"] {
+    width: 200px !important;
+}
+table:has(th[data-name="current_qty"]) th[data-name="days_of_cover"],
+table:has(td[name="current_qty"]) td[name="days_of_cover"] {
+    width: 200px !important;
+}
+table:has(th[data-name="current_qty"]) th[data-name="status"],
+table:has(td[name="current_qty"]) td[name="status"] {
+    width: 200px !important;
+}
+
+// On Hand / Value at Risk / Days of Cover: right-aligned (matches Odoo's
+// own numeric-column default — these rules exist so the intent is
+// explicit and documented here rather than left as an unstated default,
+// and so the <td> descendants and footer cells are covered the same way
+// regardless of which internal rendering path a given field takes).
+// `value_at_risk` has `widget="monetary"` in the arch (current_qty does
+// not), which routes it through a different internal component
+// (canUseFormatter() in list_renderer.js returns false whenever a
+// column has a widget) — `*` inside the <td> covers its value
+// regardless of exactly where that path places the text node. The
+// footer/aggregate row's <td> never gets a data-name/name attribute at
+// all (a separate <tfoot> template branch), so it's targeted via
+// `table:has(...)` + `.o_list_number` instead.
+th[data-name="current_qty"],
+td[name="current_qty"],
+td[name="current_qty"] *,
+th[data-name="value_at_risk"],
+td[name="value_at_risk"],
+td[name="value_at_risk"] *,
+table:has(th[data-name="current_qty"]) tfoot td.o_list_number {
+    text-align: right !important;
+}
+thead tr:has(th[data-name="current_qty"]) th[data-name="days_of_cover"],
+tbody tr:has(td[name="current_qty"]) td[name="days_of_cover"] {
+    text-align: right !important;
+}
+
+// Tabular numerals for the three numeric columns. Note: confirmed via
+// the compiled CSS that Odoo already applies `font-variant-numeric:
+// tabular-nums` to every list table natively (`.o_list_table{...}`), so
+// this rule is redundant in practice — kept only to make the intent
+// explicit here rather than relying on an unstated native default.
+th[data-name="current_qty"],
+td[name="current_qty"],
+th[data-name="value_at_risk"],
+td[name="value_at_risk"],
+thead tr:has(th[data-name="current_qty"]) th[data-name="days_of_cover"],
+tbody tr:has(td[name="current_qty"]) td[name="days_of_cover"] {
+    font-variant-numeric: tabular-nums;
+}
+
+// Bold totals row. Note: confirmed via the compiled CSS that Odoo's own
+// <tfoot> already renders bold natively, so this is also redundant in
+// practice — kept for the same explicitness reason as tabular-nums above.
+table:has(th[data-name="current_qty"]) tfoot td.o_list_number {
+    font-weight: 700;
+}
+
+// Status badge minimum width, so "Not Enough Data" and "Active"/
+// "Resolved" occupy the same pill size instead of shrink-wrapping to
+// their own text length.
+tbody tr:has(td[name="current_qty"]) td[name="status"] .badge,
+thead tr:has(th[data-name="current_qty"]) th[data-name="status"] {
+    min-width: 110px;
+}
+
+// Explicit 12px/16px cell padding for header and body alike. Odoo's own
+// padding is already identical between <th> and <td> natively (verified
+// via live measurement: 8px top/bottom, 4.8px left/right on both) — this
+// replaces those values with the specific ones requested, applied
+// identically to both via one selector so there is no risk of the two
+// drifting apart. Scoped to field-bearing cells only ([data-name]/
+// [name]), which naturally excludes the checkbox and trailing settings
+// columns (neither carries those attributes), so their own native
+// sizing/padding is left alone.
+table:has(th[data-name="current_qty"]) th[data-name],
+table:has(td[name="current_qty"]) td[name] {
+    padding: 12px 16px !important;
+}
+
+// Fixes the vertical scrollbar / large empty-space-below-table issue on
+// this screen specifically. Root cause, confirmed via live measurement
+// of the actual box heights (not assumed): Odoo's native
+// `.o_list_renderer { height: 100%; }` rule computes against its
+// PARENT's (.o_content) full height, with no awareness of sibling
+// elements. This module's own tab-strip patch (list_view_patch.xml)
+// injects the InventoryTabStrip + info banner as EXTRA siblings of the
+// renderer inside .o_content — space native Odoo's height math never
+// accounted for. Result: renderer top (starting after those siblings)
+// + a full forced 100%-of-.o_content height pushes its bottom edge past
+// .o_content's own bottom by exactly the tab-strip+banner height, which
+// .o_content (overflow-y: auto) absorbs as a scrollbar — while the
+// renderer's box is simultaneously far taller than its actual content
+// (banner/table/footer), which is what shows as empty space.
+// `height: auto` instead makes the renderer size to its real content:
+// with few rows it shrinks (no scrollbar, no empty space); with enough
+// rows to exceed .o_content's available space, .o_content's own
+// existing overflow-y: auto still scrolls normally — global Odoo
+// scrolling behavior is untouched, only this one screen's renderer
+// sizing changes. Scoped via :has(), the same technique as every other
+// rule in this file — current_qty is unique to this one list.
+.o_list_renderer:has(th[data-name="current_qty"]) {
+    height: auto !important;
+}

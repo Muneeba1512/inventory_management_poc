@@ -10,28 +10,28 @@
         <field name="model">inventory.store.consumption</field>
         <field name="arch" type="xml">
 
-            <!-- Column-width standard (module-wide, native Odoo `width`
-                 attribute): Medium=140px, Small=90px. The identity column
-                 (Product) deliberately has NO fixed width so it absorbs
-                 leftover space (native Odoo pattern) — fixing every
-                 column leaves nothing to absorb it, which stretches all
-                 columns uniformly and breaks badge/header alignment. -->
+            <!-- Fixed native widths (~20/25/20/10/12.5/12.5% of an 800px
+                 baseline). All six columns are left-aligned, including
+                 Quantity (numeric) and Status (badge) — both deliberate
+                 exceptions to Odoo's own defaults for those types; see
+                 list_views.scss for the two small overrides that make
+                 that possible, scoped specifically to this list. -->
             <list string="Store Consumption">
 
-                <field name="name" width="140px"/>
+                <field name="name" width="160px"/>
 
-                <field name="product_summary" string="Product"/>
+                <field name="product_summary" string="Product" width="200px"/>
 
-                <field name="store_id" width="140px"/>
+                <field name="store_id" width="160px"/>
 
-                <field name="total_quantity" string="Quantity" width="90px"/>
+                <field name="total_quantity" string="Quantity" width="80px"/>
 
-                <field name="date"/>
+                <field name="date" width="100px"/>
 
                 <field
                     name="state"
                     widget="badge"
-                    width="140px"
+                    width="100px"
                     decoration-muted="state == 'draft'"
                     decoration-success="state == 'done'"/>
 

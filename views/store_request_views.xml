@@ -10,26 +10,29 @@
         <field name="model">inventory.store.request</field>
         <field name="arch" type="xml">
 
-            <!-- Column-width standard (module-wide, native Odoo `width`
-                 attribute): Medium=140px, Small=90px. The identity column
-                 (Reference) deliberately has NO fixed width so it absorbs
-                 leftover space (native Odoo pattern) — fixing every
-                 column leaves nothing to absorb it, which stretches all
-                 columns uniformly and breaks badge/header alignment. -->
+            <!-- Same fixed-width pattern as the Warehouse -> Receipts list
+                 (see views/receipt_views.xml): Reference is fixed at
+                 200px and the other four at 150px each, instead of
+                 letting Reference absorb all leftover space. This one
+                 view backs all three Requests tabs (To Approve, To
+                 Fulfill, My Requests — see the three actions below, none
+                 of which override view_id), so the widths apply
+                 identically across all three automatically. All native
+                 Odoo `width` attributes, no CSS. -->
             <list string="Store Requests">
 
-                <field name="name"/>
+                <field name="name" width="200px"/>
 
-                <field name="store_id" width="140px"/>
+                <field name="store_id" width="150px"/>
 
-                <field name="requested_by" width="140px"/>
+                <field name="requested_by" width="150px"/>
 
-                <field name="line_count" string="Items" width="90px"/>
+                <field name="line_count" string="Items" width="150px" class="text-start"/>
 
                 <field
                     name="state"
                     widget="badge"
-                    width="140px"
+                    width="150px"
                     decoration-muted="state == 'draft'"
                     decoration-info="state == 'submitted'"
                     decoration-primary="state == 'approved'"

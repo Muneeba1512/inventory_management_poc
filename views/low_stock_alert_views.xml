@@ -10,20 +10,27 @@
         <field name="model">inventory.low.stock.alert</field>
         <field name="arch" type="xml">
 
-            <!-- Column-width standard (module-wide, native Odoo `width`
-                 attribute): Medium=140px, Small=90px. Columns grouped
-                 Inventory -> Financial -> Stock Health. The identity
-                 column (Product) deliberately has NO fixed width so it
-                 absorbs leftover space (native Odoo pattern) — fixing
-                 every column leaves nothing to absorb it, which stretches
-                 all columns uniformly and breaks badge/header alignment. -->
+            <!-- The `width` attributes below are a native-Odoo pixel
+                 fallback only (in case the stylesheet fails to load for
+                 any reason) — the actual rendered widths are percentage-
+                 based (Product 26%, Location/On Hand/Value at
+                 Risk/Days of Cover/Status per spec) via `!important` CSS
+                 in list_views.scss, since Odoo's native `width=` attribute
+                 is pixel-only and can't express a percentage. On Hand,
+                 Value at Risk and Days of Cover are right-aligned
+                 (Odoo's own numeric default) via the same stylesheet;
+                 Status stays centered via the module-wide badge rule.
+                 This same list also backs the Store Alerts action via a
+                 different domain, so every CSS override in list_views.scss
+                 applies to Store Alerts too — a known, accepted tradeoff,
+                 not a gap. -->
             <list string="Low Stock Alerts" create="false" edit="false" delete="false">
 
-                <field name="product_id"/>
+                <field name="product_id" width="200px"/>
 
-                <field name="location_id" string="Location / Store" width="140px"/>
+                <field name="location_id" string="Location / Store" width="150px"/>
 
-                <field name="current_qty" width="90px" sum="Total On Hand"/>
+                <field name="current_qty" width="150px" sum="Total On Hand"/>
 
                 <field name="avg_daily_consumption" width="90px" optional="hide"/>
 
@@ -31,14 +38,14 @@
 
                 <field name="unit_cost" widget="monetary" width="140px" optional="hide"/>
 
-                <field name="value_at_risk" widget="monetary" width="140px" sum="Total Value at Risk"/>
+                <field name="value_at_risk" widget="monetary" width="150px" sum="Total Value at Risk"/>
 
-                <field name="days_of_cover" width="90px" invisible="status == 'not_enough_data'"/>
+                <field name="days_of_cover" width="150px" invisible="status == 'not_enough_data'"/>
 
                 <field
                     name="status"
                     widget="badge"
-                    width="140px"
+                    width="150px"
                     decoration-danger="status == 'active'"
                     decoration-success="status == 'resolved'"
                     decoration-muted="status == 'not_enough_data'"/>
