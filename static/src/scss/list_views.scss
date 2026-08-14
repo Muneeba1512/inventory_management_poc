@@ -103,53 +103,27 @@ td[name="total_quantity"] {
 // one list's table, never any other screen.
 // ============================================================
 
-// Column widths matching the requested 26/18/12/14/14/14 ratio for
-// Product/Location/On Hand/Value at Risk/Days of Cover/Status.
+// Column widths are NOT set here (deliberately — see below). Product has
+// no width at all (absorbs/shrinks with the viewport, same as Stock by
+// Location's own Product column); the other five columns' widths are set
+// directly via `width=` on the <field> in views/low_stock_alert_views.xml.
 //
-// This was FIRST attempted as literal `calc((100% - 80px) * 0.26)` etc.
-// (percentage-based, as requested) and verified live via Chrome DevTools
-// Protocol: the CSSOM confirmed the rule matched and won with
-// !important (beating the JS's non-important inline pixel width, same
-// mechanism as every text-align override in this file) — but the
-// resulting *rendered* width was NOT proportional; all six columns
-// rendered equal (~250px) regardless of their different declared
-// percentages. This is a genuine `table-layout: fixed` limitation, not
-// a specificity/scoping problem: per spec, fixed layout takes its
-// column widths as a *hint* from the first row, and browsers do not
-// reliably honor differing %/calc()-mixed widths across sibling cells
-// in that mode — they tend to collapse toward equal distribution.
-// Plain pixel values do not have this problem (proven — this is the
-// same mechanism already working correctly for every other list in
-// this module). These pixel values are the 26/18/12/14/14/14 ratio
-// computed at a 1420px baseline (a representative content width after
-// subtracting the ~80px fixed checkbox + settings columns), so the
-// same *proportions* requested are preserved even though the literal
-// unit is px rather than %.
-table:has(th[data-name="current_qty"]) th[data-name="product_id"],
-table:has(td[name="current_qty"]) td[name="product_id"] {
-    width: 380px !important;
-}
-table:has(th[data-name="current_qty"]) th[data-name="location_id"],
-table:has(td[name="current_qty"]) td[name="location_id"] {
-    width: 260px !important;
-}
-th[data-name="current_qty"],
-td[name="current_qty"] {
-    width: 175px !important;
-}
-th[data-name="value_at_risk"],
-td[name="value_at_risk"] {
-    width: 200px !important;
-}
-table:has(th[data-name="current_qty"]) th[data-name="days_of_cover"],
-table:has(td[name="current_qty"]) td[name="days_of_cover"] {
-    width: 200px !important;
-}
-table:has(th[data-name="current_qty"]) th[data-name="status"],
-table:has(td[name="current_qty"]) td[name="status"] {
-    width: 200px !important;
-}
-
+// This used to be a CSS `!important` override here (Location=260px,
+// On Hand=175px, Value at Risk/Days of Cover/Status=200px each), with the
+// arch still declaring 150px for all five. That caused a real horizontal-
+// overflow bug: Odoo's own column-width algorithm
+// (getWidthSpecs()/computeWidths() in column_width_hook.js) reads the
+// arch's `width=` attribute to set a column's minWidth AND maxWidth, and
+// uses that to compute how much leftover viewport space the one
+// shrinkable/expandable column (Product) gets. It had no way to know this
+// CSS would later re-render those five columns 110-660px wider than the
+// 150px it planned for, so the table overflowed (confirmed live via CDP:
+// 1487px table width / 137px overflow at a 1366px window) even though
+// Odoo's own math said everything fit. Moving the real widths into the
+// arch (so minWidth == maxWidth == the width that actually renders)
+// removes the discrepancy at the source — Odoo now reserves the correct
+// space for Product itself, no CSS needed.
+//
 // On Hand / Value at Risk / Days of Cover: right-aligned (matches Odoo's
 // own numeric-column default — these rules exist so the intent is
 // explicit and documented here rather than left as an unstated default,
