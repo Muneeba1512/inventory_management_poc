@@ -250,3 +250,53 @@ table:has(td[name="current_qty"]) td[name] {
 .o_list_renderer:has(th[data-name="current_qty"]) {
     height: auto !important;
 }
+
+// ============================================================
+// Stock by Location / My Store Stock (inventory.stock.by.location — one
+// shared view backing BOTH the Warehouse "Stock by Location" tab and the
+// Store "My Store Stock" tab, see views/stock_by_location_views.xml).
+// On Hand (`quantity`), Total Value (`total_value`) and Days of Cover
+// (`days_of_cover`) are a deliberate, explicitly-requested left-align
+// exception to Odoo's own numeric-column default, to match Product/
+// Location/Warehouse/Store on the same list. Applying this here means it
+// applies to both tabs identically — same accepted tradeoff as every
+// other view shared this way in this module (e.g. Low Stock Alerts).
+// Cover Status (`alert_status`) is untouched, staying centered via the
+// module-wide badge rule above.
+// ============================================================
+
+// `total_value` is confirmed unique to this one model, so it needs no
+// `:has()` scoping. `quantity` and `days_of_cover` are NOT unique —
+// `quantity` also names a field on receipt/consumption lines, and
+// `days_of_cover` also names a field on Low Stock Alerts (which already
+// has its own, deliberately right-aligned, rule elsewhere in this file)
+// — so both are scoped via `:has(th[data-name="total_value"])` to make
+// sure these rules can only ever match this one table. The `*` on every
+// header selector is required for the same reason as every other
+// alignment override in this file: the header LABEL TEXT lives in a
+// nested span carrying Odoo's own right-align class directly on itself,
+// not merely inherited from the <th>.
+th[data-name="total_value"],
+th[data-name="total_value"] *,
+td[name="total_value"],
+table:has(th[data-name="total_value"]) th[data-name="quantity"],
+table:has(th[data-name="total_value"]) th[data-name="quantity"] *,
+table:has(td[name="total_value"]) td[name="quantity"],
+table:has(th[data-name="total_value"]) th[data-name="days_of_cover"],
+table:has(th[data-name="total_value"]) th[data-name="days_of_cover"] *,
+table:has(td[name="total_value"]) td[name="days_of_cover"] {
+    text-align: left !important;
+}
+
+// Aggregate cells for On Hand / Total Value (the only two columns on
+// this list with a `sum=`) — left-aligned too, so totals match the
+// header/value alignment above them instead of reverting to Odoo's
+// native right-aligned default. Two places these can render, both
+// using the same native `o_list_number` class on the cell: the
+// `<tfoot>` row (flat/ungrouped list) and `.o_group_header` rows (this
+// list's default view groups by location — confirmed live that the
+// group aggregate cell carries the identical `o_list_number` class).
+table:has(th[data-name="total_value"]) tfoot td.o_list_number,
+table:has(th[data-name="total_value"]) .o_group_header td.o_list_number {
+    text-align: left !important;
+}
