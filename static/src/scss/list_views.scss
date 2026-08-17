@@ -48,7 +48,19 @@
 // compiled three classes deep
 // (.o_list_renderer .o_list_table thead .o_list_number_th), which
 // out-specifies a flat selector.
-th[data-name="line_count"] {
+//
+// The `*` is required too, same root cause as Store Consumption's
+// Quantity column below: the header LABEL TEXT is not direct text
+// content of the <th> — Odoo nests it in a flex-child <span> that
+// carries `o_list_number_th` (and its native right-align) DIRECTLY on
+// itself. A rule on the <th> alone makes the <th>'s own computed style
+// "left" but has zero effect on that inner span's own text, since a
+// directly-applied rule on an element always wins over an inherited
+// value from its ancestor — this was the exact bug that made "Items"
+// visually misalign from its value ("1") despite the <th> rule already
+// being present.
+th[data-name="line_count"],
+th[data-name="line_count"] * {
     text-align: left !important;
 }
 

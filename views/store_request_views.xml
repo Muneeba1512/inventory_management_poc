@@ -25,9 +25,9 @@
 
                 <field name="store_id" width="150px"/>
 
-                <field name="requested_by" width="150px"/>
-
                 <field name="line_count" string="Items" width="150px" class="text-start"/>
+
+                <field name="requested_by" width="150px"/>
 
                 <field
                     name="state"
