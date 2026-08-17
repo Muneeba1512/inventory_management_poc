@@ -84,10 +84,12 @@
         sequence="5"/>
 
     <!-- ========================================================= -->
-    <!-- 6. Configuration (Admin only) — single leaf menu, opens    -->
-    <!-- Products directly (no dropdown). Wraps the native product  -->
-    <!-- action in our own record so we can set a breadcrumb-       -->
-    <!-- friendly name without renaming shared native data.        -->
+    <!-- 6. Configuration (Admin only) — now two sub-items          -->
+    <!-- (Products, Settings), per FDD §5.2/§5.14 — a real Odoo      -->
+    <!-- dropdown submenu, not the custom tab strip used elsewhere. -->
+    <!-- Wraps the native product action in our own record so we    -->
+    <!-- can set a breadcrumb-friendly name without renaming shared -->
+    <!-- native data.                                                -->
     <!-- ========================================================= -->
 
     <record id="action_inventory_configuration_products" model="ir.actions.act_window">
@@ -116,8 +118,21 @@
         id="menu_inventory_administration"
         name="Configuration"
         parent="menu_inventory_management_root"
-        action="action_inventory_configuration_products"
         groups="inventory_management_poc.group_inventory_admin"
         sequence="6"/>
+
+    <menuitem
+        id="menu_inventory_administration_products"
+        name="Products"
+        parent="menu_inventory_administration"
+        action="action_inventory_configuration_products"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_inventory_administration_settings"
+        name="Settings"
+        parent="menu_inventory_administration"
+        action="action_inventory_res_config_settings"
+        sequence="2"/>
 
 </odoo>

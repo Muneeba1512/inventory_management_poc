@@ -31,6 +31,7 @@ Inventory Management POC
         "wizard/store_request_reject_wizard_views.xml",
         "views/store_consumption_views.xml",
         "views/low_stock_alert_views.xml",
+        "views/res_config_settings_views.xml",
         "views/menu_views.xml",
     ],
 

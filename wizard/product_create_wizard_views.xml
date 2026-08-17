@@ -20,6 +20,8 @@
 
                     <field name="receipt_id" invisible="1"/>
 
+                    <field name="line_id" invisible="1"/>
+
                 </group>
 
                 <footer>

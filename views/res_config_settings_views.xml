@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- Settings — Gemini API configuration for AI Smart Receiving -->
+    <!-- (FDD §5.14: Configuration > Settings, Admin only). Uses the -->
+    <!-- native Odoo 19 <app>/<block>/<setting> settings DSL, same   -->
+    <!-- pattern as stock/views/res_config_settings_views.xml.       -->
+    <!-- ========================================================= -->
+
+    <record id="view_inventory_res_config_settings_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.inventory.management.poc</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//form" position="inside">
+
+                <app data-string="Inventory Management" string="Inventory Management" name="inventory_management_poc">
+
+                    <block title="AI Smart Receiving" id="inventory_ai_smart_receiving">
+
+                        <setting id="inventory_gemini_api_key_setting" help="Used to read uploaded invoices for AI Smart Receiving. Stored server-side only, never sent to the browser.">
+
+                            <field name="inventory_gemini_api_key" password="True" placeholder="Enter API key..."/>
+
+                        </setting>
+
+                        <setting id="inventory_gemini_model_setting" help="Fixed to gemini-2.5-flash per the confirmed project design.">
+
+                            <field name="inventory_gemini_model"/>
+
+                        </setting>
+
+                    </block>
+
+                </app>
+
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="action_inventory_res_config_settings" model="ir.actions.act_window">
+
+        <field name="name">Settings</field>
+
+        <field name="res_model">res.config.settings</field>
+
+        <field name="view_mode">form</field>
+
+        <field name="context">{'module': 'inventory_management_poc', 'bin_size': False}</field>
+
+    </record>
+
+</odoo>

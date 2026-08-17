@@ -9,3 +9,4 @@ from . import store_consumption_line
 from . import low_stock_alert
 from . import value_snapshot
 from . import dashboard
+from . import res_config_settings
