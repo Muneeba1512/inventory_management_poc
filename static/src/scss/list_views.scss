@@ -16,11 +16,31 @@
 // getCellClass() both push `o_${column.widget}_cell`). Centering through
 // that native class — instead of inventing a new one — is what lets this
 // rule apply identically to every badge/status column in this module
-// (Cover Status, Low Stock Status, Receiving Method, Receipt/Request/
-// Consumption Status) with zero per-view CSS, and to any future one added
-// the same way, without touching Odoo core.
+// (Cover Status, Low Stock Status, Receipt/Request/Consumption Status)
+// with zero per-view CSS, and to any future one added the same way,
+// without touching Odoo core. Receiving Method is a deliberate, explicitly
+// requested exception to this default — see below.
 .o_list_renderer .o_badge_cell {
     text-align: center;
+}
+
+// Receipts "Receiving Method" column (inventory.receipt.receipt_type) is a
+// deliberate, explicitly-requested exception to the module-wide badge
+// centering above: it should read left-aligned like Reference/Warehouse,
+// matching the surrounding columns on that one list, not centered like
+// every other badge column. `receipt_type` is a field name unique to
+// inventory.receipt, so this flat selector can only ever match this one
+// column. `!important` is required to outrank `.o_list_renderer
+// .o_badge_cell` above (two classes beats one attribute selector on
+// specificity alone); the `*` covers the header label the same way as
+// every other alignment override in this file, in case Odoo ever nests
+// it in a child span the way it does for numeric columns — harmless if
+// it doesn't. Only this column's alignment changes: Status (`state`) on
+// the same list keeps the native centered badge.
+th[data-name="receipt_type"],
+th[data-name="receipt_type"] *,
+td[name="receipt_type"] {
+    text-align: left !important;
 }
 
 // Store Requests "Items" column (inventory.store.request.line_count) is a
