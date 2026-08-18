@@ -121,6 +121,18 @@ class InventoryStoreConsumption(models.Model):
             consumption._create_stock_moves()
             consumption.state = "done"
 
+        # Recorded consumption just changed this store's 7-day outflow and
+        # on-hand stock — both inputs to the low-stock calculation — so the
+        # alert table would otherwise stay stale until the next daily cron
+        # run. _compute_alerts() recomputes every watched location in one
+        # pass by design (see its own docstring: "safe to call as often as
+        # needed"), so this also refreshes Warehouse Alerts as a byproduct
+        # of that shared routine — the warehouse calculation itself is not
+        # touched, only recomputed sooner. Called once after the loop, not
+        # per record, since the routine is global rather than per-store.
+        if self:
+            self.env["inventory.low.stock.alert"]._compute_alerts()
+
     def _check_stock_availability(self):
         """Block confirmation if any product's total quantity on this
         consumption exceeds what is currently available at the store
